@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script>
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			var geometriaCaixa = new THREE.BoxGeometry( 1, 1, 1 );
+			var geometriaEsfera = new THREE.SphereGeometry(1, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
+			var geometriaAnell = new THREE.RingGeometry( 1, 1.2, 32 );
+			var materialCaixa = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
+			var materialAnell =  new THREE.MeshLambertMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+			var materialEsfera = new THREE.MeshNormalMaterial();
+			var esfera = new THREE.Mesh(geometriaEsfera, materialEsfera );
+			var anell= new THREE.Mesh( geometriaAnell ,materialAnell);
+			var cube = new THREE.Mesh( geometriaCaixa, materialCaixa );
+			
+						// create a point light
+			var pointLight = new THREE.PointLight( 0xFFFFFF );
+			// set its position
+			pointLight.position.x = 5;
+			pointLight.position.y = 5;
+			pointLight.position.z = 3;
+			// add to the scene
+			scene.add(pointLight); 
+			
+			scene.add( cube );
+			scene.add(esfera);
+			scene.add(anell);
+			
+			esfera.position.x=4;
+			cube.position.x=-4;
+			camera.position.z = 5;
+
+			var render = function () {
+				requestAnimationFrame( render );
+				anell.rotation.x +=0.01
+				anell.rotation.y +=0.01
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
+				esfera.rotation.y += 0.01;
+
+				renderer.render(scene, camera);
+			};
+
+			render();
+		</script>
+	</body>
+</html>
