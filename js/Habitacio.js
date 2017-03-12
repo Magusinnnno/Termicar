@@ -83,7 +83,10 @@ var Pantalla = {
 		this.scene.add( this.anell );
 		
 		this.esfera.position.x=4;
+		this.esfera.position.z=2;
 		this.cube.position.x=-4;
+		this.cube.position.z=2;
+		this.anell.position.z=2;
 		this.camera.position.z = 5;
 		
 		// Load Json model
