@@ -90,12 +90,9 @@ var Pantalla = {
 		//this.loadJsonModel();
 
 		// Load Dae model
-		var pos = (-4, -1, -2.5);
-		this.loadDaeModel('models/robot.dae', pos, 0.7); //(-4, -1, -2.5)
-		pos = (4, -1, -2.5);
-		this.loadDaeModel('models/home.dae', pos, 0.7); //(4, -1, -2.5)
-		pos = (0, -1, -4.5)
-		this.loadDaeModel('models/cotxe.dae', pos, 8); //(0, -1, -2.5)
+		this.loadDaeModel('models/robot.dae', -4, 0.7); //(-4, -1, -2.5)
+		this.loadDaeModel('models/home.dae', 4, 0.7); //(4, -1, -2.5)
+		this.loadDaeModel('models/cotxe.dae', 0, 8); //(0, -1, -2.5)
 	},
 	loadJsonModel: function() {
 
@@ -147,7 +144,7 @@ var Pantalla = {
 			});
 
 			// Set position and scale
-			modelMesh.position.set(pos);
+			modelMesh.position.set(pos, -1, -2.5);
 			modelMesh.scale.set(scale, scale, scale);
 
 			// Add the mesh into scene
