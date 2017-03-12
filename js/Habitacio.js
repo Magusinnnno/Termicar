@@ -90,9 +90,9 @@ var Pantalla = {
 		//this.loadJsonModel();
 
 		// Load Dae model
-		this.loadDaeModel('models/robot.dae', -4, 2.5, 0.7); //(-4, -1, -2.5)
-		this.loadDaeModel('models/home.dae', 4, 2.5, 0.7); //(4, -1, -2.5)
-		this.loadDaeModel('models/cotxe.dae', 0, 4, 2); //(0, -1, -2.5)
+		this.loadDaeModel('models/robot.dae', -4, -2.5, 0.7); //(-4, -1, -2.5)
+		this.loadDaeModel('models/home.dae', 4, -2.5, 0.7); //(4, -1, -2.5)
+		this.loadDaeModel('models/cotxe.dae', 0, -4, 2); //(0, -1, -2.5)
 	},
 	loadJsonModel: function() {
 
