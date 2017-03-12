@@ -83,19 +83,16 @@ var Pantalla = {
 		this.scene.add( this.anell );
 		
 		this.esfera.position.x=4;
-		this.esfera.position.z=2;
 		this.cube.position.x=-4;
-		this.cube.position.z=2;
-		this.anell.position.z=2;
 		this.camera.position.z = 5;
 		
 		// Load Json model
 		//this.loadJsonModel();
 
 		// Load Dae model
-		this.loadDaeModel('models/robot.dae', -4, 0.7); //(-4, -1, -2.5)
-		this.loadDaeModel('models/home.dae', 4, 0.7); //(4, -1, -2.5)
-		this.loadDaeModel('models/cotxe.dae', 0, 2); //(0, -1, -2.5)
+		this.loadDaeModel('models/robot.dae', -4, 2.5, 0.7); //(-4, -1, -2.5)
+		this.loadDaeModel('models/home.dae', 4, 2.5, 0.7); //(4, -1, -2.5)
+		this.loadDaeModel('models/cotxe.dae', 0, 4, 2); //(0, -1, -2.5)
 	},
 	loadJsonModel: function() {
 
@@ -129,7 +126,7 @@ var Pantalla = {
 		});
 
 	},
-	loadDaeModel: function(daeLocation, pos, scale) {
+	loadDaeModel: function(daeLocation, x, z, scale) {
 
 		// Prepare ColladaLoader
 		var daeLoader = new THREE.ColladaLoader();
@@ -147,7 +144,7 @@ var Pantalla = {
 			});
 
 			// Set position and scale
-			modelMesh.position.set(pos, -1, -2.5);
+			modelMesh.position.set(x, -1, z);
 			modelMesh.scale.set(scale, scale, scale);
 
 			// Add the mesh into scene
