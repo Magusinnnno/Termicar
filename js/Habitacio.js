@@ -90,8 +90,9 @@ var Pantalla = {
 		//this.loadJsonModel();
 
 		// Load Dae model
-		this.loadDaeModel('models/robot.dae', -3); //-3, -1, -2.5
-		this.loadDaeModel('models/home.dae', 3); //3, -1, -2.5
+		this.loadDaeModel('models/robot.dae', -3, 0.7); //(-3, -1, -2.5)
+		this.loadDaeModel('models/home.dae', 3, 0.7); //(3, -1, -2.5)
+		this.loadDaeModel('models/cotxe.dae', 0, 1); //(0, -1, -2.5)
 	},
 	loadJsonModel: function() {
 
@@ -125,7 +126,7 @@ var Pantalla = {
 		});
 
 	},
-	loadDaeModel: function(daeLocation, pos) {
+	loadDaeModel: function(daeLocation, pos, scale) {
 
 		// Prepare ColladaLoader
 		var daeLoader = new THREE.ColladaLoader();
@@ -143,7 +144,6 @@ var Pantalla = {
 			});
 
 			// Set position and scale
-			var scale = 0.7;
 			modelMesh.position.set(pos, -1, -2.5);
 			modelMesh.scale.set(scale, scale, scale);
 
