@@ -92,7 +92,7 @@ var Pantalla = {
 		// Load Dae model
 		this.loadDaeModel('models/robot.dae', -4, 0.7); //(-4, -1, -2.5)
 		this.loadDaeModel('models/home.dae', 4, 0.7); //(4, -1, -2.5)
-		this.loadDaeModel('models/cotxe.dae', 0, 8); //(0, -1, -2.5)
+		this.loadDaeModel('models/cotxe.dae', 0, 2); //(0, -1, -2.5)
 	},
 	loadJsonModel: function() {
 
