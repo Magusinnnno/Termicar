@@ -16,7 +16,7 @@ var Pantalla = {
 		var VIEW_ANGLE = 75, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 1000;
 		this.camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 		this.scene.add(this.camera);
-		this.camera.position.set(100, 0, 0);
+		this.camera.position.set(0, 14.5, 24);
 		this.camera.lookAt(new THREE.Vector3(0,0,0));
 
 		// Prepare webgl renderer
@@ -84,15 +84,15 @@ var Pantalla = {
 		
 		this.esfera.position.x=4;
 		this.cube.position.x=-4;
-		this.camera.position.z = 5;
 		
 		// Load Json model
 		//this.loadJsonModel();
 
 		// Load Dae model
+		var k = 14;
 		this.loadDaeModel('models/robot.dae', -4, -2.5, 0.7); //(-4, -1, -2.5)
-		this.loadDaeModel('models/home.dae', 4, -2.5, 0.7); //(4, -1, -2.5)
-		this.loadDaeModel('models/cotxe.dae', 0, -6, 2); //(0, -1, -6)
+		this.loadDaeModel('models/home.dae', 0.5, 0.5 + k, 0.7, 0.5);
+		this.loadDaeModel('models/cotxe.dae', 0, k, 2.5); //(0, -1, -6)
 	},
 	loadJsonModel: function() {
 
@@ -126,7 +126,7 @@ var Pantalla = {
 		});
 
 	},
-	loadDaeModel: function(daeLocation, x, z, scale) {
+	loadDaeModel: function(daeLocation, x, z, scale, y=1) {
 
 		// Prepare ColladaLoader
 		var daeLoader = new THREE.ColladaLoader();
@@ -136,15 +136,16 @@ var Pantalla = {
 			var modelMesh = collada.scene;
 
 			// Prepare and play animation
-			modelMesh.traverse( function (child) {
-				if (child instanceof THREE.SkinnedMesh) {
-					var animation = new THREE.Animation(child, child.geometry.animation);
-					animation.play();
-				}
-			});
+			// modelMesh.traverse( function (child) {
+				// if (child instanceof THREE.SkinnedMesh) {
+					// var animation = new THREE.Animation(child, child.geometry.animation);
+					// animation.play();
+				// }
+			// });
 
 			// Set position and scale
-			modelMesh.position.set(x, -1, z);
+			modelMesh.position.set(x, y, z);
+			modelMesh.rotation.y = Math.PI;
 			modelMesh.scale.set(scale, scale, scale);
 
 			// Add the mesh into scene
@@ -163,7 +164,9 @@ function animate() {
 
 function update() {
   var delta = Pantalla.clock.getDelta();
-
+	//console.log('Eix X: ' + Pantalla.camera.position.x);
+	//console.log('Eix Y: ' + Pantalla.camera.position.y);
+	//console.log('Eix Z: ' + Pantalla.camera.position.z);
   Pantalla.controls.update(delta);
   Pantalla.stats.update();
 
