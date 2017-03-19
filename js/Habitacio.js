@@ -67,6 +67,15 @@ var Pantalla = {
 		pointLight.position.z = 3;
 		this.scene.add( pointLight );
 		
+		//Add texture
+		var textureLoader = new THREE.TextureLoader();
+		textureLoader.load('textures/ground.png', function (texture) {
+			var geometry = new THREE.PlaneBufferGeometry(2, 2);
+			var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+			var ground = new THREE.Mesh(geometry, material);
+			Pantalla.scene.add(ground);
+		});
+		
 		// Create objects
 		var geometriaCaixa = new THREE.BoxGeometry( 1, 1, 1 );
 		var geometriaEsfera = new THREE.SphereGeometry(1, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
