@@ -21,7 +21,8 @@ var Background = {
         this.scene.add( this.camera );
 		
 		this.texture = THREE.ImageUtils.loadTexture( 'textures/background.jpg' );
-        this.mesh = new THREE.Mesh( new THREE.PlaneGeometry(2, 2, 0), new THREE.MeshBasicMaterial({
+		this.texture.minFilter = THREE.LinearFilter;
+        this.mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry(2, 2, 0), new THREE.MeshBasicMaterial({
                 map: this.texture
             }));
         this.mesh.material.depthTest = false;
