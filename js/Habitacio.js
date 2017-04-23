@@ -10,6 +10,9 @@ renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 renderer.setPixelRatio( window.devicePixelRatio );
 container.appendChild(renderer.domElement);
 
+var keyboard = new KeyboardState();
+var clock = new THREE.Clock();
+
 // Create your background scene
 var Background = {
 	scene: null, camera: null, renderer: null,
@@ -35,7 +38,7 @@ var Pantalla = {
 	scene: null, camera: null, holder: null, controls: null,
 	clock: null, stats: null, esfera: null,
 	anell: null, cube: null, home: null, 
-	cotxe: null, robot: null,
+	cotxe: null, robot: null, is_jumping:null,
 	
 	init: function() {
 
@@ -146,21 +149,6 @@ var Pantalla = {
 			Pantalla.holder.add(Pantalla.robot);
 		});
 		
-		// Load man model
-		var homeLoader = new THREE.ColladaLoader();
-		homeLoader.options.convertUpAxis = true;
-		homeLoader.load('models/home.dae', function(collada) {
-			Pantalla.home = collada.scene;
-
-			// Set position and scale
-			Pantalla.home.position.set(0.5, 0.7, 0.5 + k);
-			Pantalla.home.rotation.y = Math.PI;
-			Pantalla.home.scale.set(0.5, 0.5, 0.5);
-
-			// Add the mesh into scene
-			Pantalla.holder.add(Pantalla.home);
-		});
-		
 		// Load Car model
 		var cotxeLoader = new THREE.ColladaLoader();
 		cotxeLoader.options.convertUpAxis = true;
@@ -182,7 +170,9 @@ var Pantalla = {
 		this.holder.position.x -= 5
 		
 		this.scene.add( this.holder );
-	}
+		this.is_jumping = false;
+	},
+
 	// loadJsonModel: function() {
 
 		// // Prepare JSONLoader
@@ -246,19 +236,59 @@ var Pantalla = {
 	// }
 };
 
+// Saltar:
+function jump() {
+	new TWEEN.Tween({jump: 0}).to({jump: Math.PI}, 500).onUpdate(function () {
+			Pantalla.cotxe.position.y = 10*Math.sin(this.jump);
+			if ( this.jump > 3.1 )
+				Pantalla.cotxe.is_jumping = false;
+			else
+				Pantalla.cotxe.is_jumping = true;
+		}).start();
+}
+
 // Animate the scene
 function animate() {
   requestAnimationFrame(animate);
+  TWEEN.update();
   render();
   update();
 }
 
 function update() {
-	var delta = Pantalla.clock.getDelta();
-	// console.log('Eix X: ' + Pantalla.camera.position.x);
+	// var delta = Pantalla.clock.getDelta();
+	// console.log('Eix X: ' + Pantalla.cotxe.position.x);
 	// console.log('Eix Y: ' + Pantalla.camera.position.y);
 	// console.log('Eix Z: ' + Pantalla.camera.position.z);
 	// Pantalla.controls.update(delta);
+	keyboard.update();
+
+	// var moveDistance = 50 * clock.getDelta(); 
+
+	if ( keyboard.down("right") && Pantalla.cotxe.position.x != 7 && !Pantalla.cotxe.is_jumping ) 
+		Pantalla.cotxe.translateX( -7 );
+		
+	if ( keyboard.down("left") && Pantalla.cotxe.position.x != -7 && !Pantalla.cotxe.is_jumping ) 
+		Pantalla.cotxe.translateX( 7 );
+	
+	if ( keyboard.down("up") && !Pantalla.cotxe.is_jumping )
+		jump();
+	
+	if ( keyboard.down("D") && Pantalla.cotxe.position.x != 7 && !Pantalla.cotxe.is_jumping ) 
+		Pantalla.cotxe.translateX( -7 );
+		
+	if ( keyboard.down("A") && Pantalla.cotxe.position.x != -7 && !Pantalla.cotxe.is_jumping ) 
+		Pantalla.cotxe.translateX( 7 );
+	
+	if ( keyboard.down("W") && !Pantalla.cotxe.is_jumping)
+		jump();
+
+	// if ( keyboard.pressed("D") )
+		// Pantalla.cotxe.translateX( -moveDistance );
+		
+	// if ( keyboard.pressed("A") )
+		// Pantalla.cotxe.translateX( moveDistance );
+	
 	Pantalla.stats.update();
 
 	//THREE.AnimationHandler.update(delta);
