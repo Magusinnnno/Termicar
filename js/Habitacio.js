@@ -152,7 +152,7 @@ var Pantalla = {
 		// Load Car model
 		var cotxeLoader = new THREE.ColladaLoader();
 		cotxeLoader.options.convertUpAxis = true;
-		cotxeLoader.load('models/cotxe.dae', function(collada) {
+		cotxeLoader.load('models/cotxeUltim.dae', function(collada) {
 			Pantalla.cotxe = collada.scene;
 
 			// Set position and scale
