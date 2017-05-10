@@ -149,6 +149,98 @@ var Pantalla = {
 			Pantalla.holder.add(Pantalla.robot);
 		});
 		
+		
+		// Load Stop model
+		var StopLoader = new THREE.ColladaLoader();
+		StopLoader.options.convertUpAxis = true;
+		StopLoader.load('models/stopsin.dae', function(collada) {
+			Pantalla.stop = collada.scene;
+
+		
+			// Set position and scale
+			Pantalla.stop.rotation.y =- Math.PI / 2;
+			Pantalla.stop.position.set(-6, 2, -10.5);
+			Pantalla.stop.scale.set(2,2,2);
+
+			// Add the mesh into scene
+			Pantalla.holder.add(Pantalla.stop);
+		});
+		
+		
+		
+		
+		// Load Cone model
+		var ConeLoader = new THREE.ColladaLoader();
+		ConeLoader.options.convertUpAxis = true;
+		ConeLoader.load('models/cone.dae', function(collada) {
+			Pantalla.cone = collada.scene;
+
+		
+			// Set position and scale
+			Pantalla.cone.rotation.y =- Math.PI / 2;
+			Pantalla.cone.position.set(0, 2, -10.5);
+			Pantalla.cone.scale.set(1.5,1.5,1.5);
+
+			// Add the mesh into scene
+			Pantalla.holder.add(Pantalla.cone);
+		});
+		
+		
+		// Load Human model
+		var HumanLoader = new THREE.ColladaLoader();
+		HumanLoader.options.convertUpAxis = true;
+		HumanLoader.load('models/human_man_1.2.dae', function(collada) {
+			Pantalla.Human = collada.scene;
+
+		
+			// Set position and scale
+
+			Pantalla.Human.position.set(6, 4, -10.5);
+			Pantalla.Human.scale.set(1.5,1.5,1.5);
+
+			// Add the mesh into scene
+			Pantalla.holder.add(Pantalla.Human);
+		});
+		
+		
+	   // Load Cotxe low poly model
+		var CotxeLoader = new THREE.ColladaLoader();
+		CotxeLoader.options.convertUpAxis = true;
+		CotxeLoader.load('models/Car.dae', function(collada) {
+			Pantalla.Cotxe = collada.scene;
+
+		
+			// Set position and scale
+			
+
+			Pantalla.Cotxe.position.set(6, 4, -25.5);
+			Pantalla.Cotxe.scale.set(1.5,1.5,1.5);
+
+			// Add the mesh into scene
+			Pantalla.holder.add(Pantalla.Cotxe);
+		});
+
+		
+	   // Load RangeRover model
+		var RangeLoader = new THREE.ColladaLoader();
+		RangeLoader.options.convertUpAxis = true;
+		RangeLoader.load('models/RangeRover.dae', function(collada) {
+			Pantalla.Range = collada.scene;
+
+		
+			// Set position and scale
+			Pantalla.Range.rotation.y = Math.PI / 2;
+			Pantalla.Range.position.set(-6, 1, 2.5);
+			Pantalla.Range.scale.set(0.5,0.5,0.5);
+
+			// Add the mesh into scene
+			Pantalla.holder.add(Pantalla.Range);
+		});
+
+		
+		
+		
+		
 		// Load Car model
 		var cotxeLoader = new THREE.ColladaLoader();
 		cotxeLoader.options.convertUpAxis = true;
