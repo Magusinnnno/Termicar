@@ -12,6 +12,7 @@ container.appendChild(renderer.domElement);
 
 var keyboard = new KeyboardState();
 var clock = new THREE.Clock();
+var delta = 0;
 
 // Create your background scene
 var Background = {
@@ -36,15 +37,18 @@ var Background = {
 		
 var Pantalla = {		
 	scene: null, camera: null, holder: null, controls: null,
-	clock: null, stats: null, esfera: null,
-	anell: null, cube: null, home: null, 
-	cotxe: null, robot: null, is_jumping:null,
+	clock: null, stats: null, esfera: null, anell: null,
+	cube: null, home: null, cotxe: null, robot: null,
+	stop: null, cone: null, Human: null, carLow: null,
+	Range: null, is_jumping:null, stopList: [], coneList: [],
+	HumanList: [], carLowList: [], RangeList: [], raycaster: null,
 	
 	init: function() {
 
 		// Create main scene
 		this.scene = new THREE.Scene();
 		this.scene.fog = new THREE.FogExp2(0xc8e0ff, 0.0003);
+		this.Raycaster = new THREE.Raycaster();
 		
 		// Create holder
 		this.holder = new THREE.Group();
@@ -107,33 +111,32 @@ var Pantalla = {
 		});
 		
 		// Create objects
-		var geometriaCaixa = new THREE.BoxGeometry( 1, 1, 1 );
+		// var geometriaCaixa = new THREE.BoxGeometry( 1, 1, 1 );
 		var geometriaEsfera = new THREE.SphereGeometry(1, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
-		var geometriaAnell = new THREE.RingGeometry( 1, 1.2, 32 );
-		var materialCaixa = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
-		var materialAnell =  new THREE.MeshLambertMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+		// var geometriaAnell = new THREE.RingGeometry( 1, 1.2, 32 );
+		// var materialCaixa = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
+		// var materialAnell =  new THREE.MeshLambertMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
 		var materialEsfera = new THREE.MeshNormalMaterial();
 		this.esfera = new THREE.Mesh( geometriaEsfera, materialEsfera );
-		this.anell= new THREE.Mesh( geometriaAnell, materialAnell);
-		this.cube = new THREE.Mesh( geometriaCaixa, materialCaixa );
+		// this.anell= new THREE.Mesh( geometriaAnell, materialAnell);
+		// this.cube = new THREE.Mesh( geometriaCaixa, materialCaixa );
 		
-		this.holder.add( this.cube );
+		// this.holder.add( this.cube );
 		this.holder.add( this.esfera );
-		this.holder.add( this.anell );
+		// this.holder.add( this.anell );
 		
 		this.esfera.position.x = 4;
 		this.esfera.position.y = 4;
-		this.cube.position.x = -4;
-		this.cube.position.y = 4;
-		this.cube.position.z = 14;
-		this.anell.position.y = 4;
-		this.anell.position.z = -14;
+		// this.cube.position.x = -4;
+		// this.cube.position.y = 4;
+		// this.cube.position.z = 14;
+		// this.anell.position.y = 4;
+		// this.anell.position.z = -14;
 		
 		// Load Json model
 		//this.loadJsonModel();
 
 		// Load Dae model
-		var k = 14;
 		
 		// Load Robot model
 		var robotLoader = new THREE.ColladaLoader();
@@ -159,7 +162,7 @@ var Pantalla = {
 		
 			// Set position and scale
 			Pantalla.stop.rotation.y =- Math.PI / 2;
-			Pantalla.stop.position.set(-6, 2, -10.5);
+			Pantalla.stop.position.set(-600, 2, -10.5);
 			Pantalla.stop.scale.set(2,2,2);
 
 			// Add the mesh into scene
@@ -173,18 +176,30 @@ var Pantalla = {
 		var ConeLoader = new THREE.ColladaLoader();
 		ConeLoader.options.convertUpAxis = true;
 		ConeLoader.load('models/cone.dae', function(collada) {
-			Pantalla.cone = collada.scene;
-
-		
+			Pantalla.cone = collada.scene.children[0];
+			
 			// Set position and scale
-			Pantalla.cone.rotation.y =- Math.PI / 2;
-			Pantalla.cone.position.set(0, 2, -10.5);
+			// Pantalla.cone.rotation.y =- Math.PI / 2;
+			Pantalla.cone.position.set(500, 2, -10.5);
 			Pantalla.cone.scale.set(1.5,1.5,1.5);
-
+			
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.cone);
+			
+			for (var i = 0; i < 3; i++) {
+				var newPiece = new THREE.Object3D();
+
+				for (var j = 0; j < Pantalla.cone.children.length; j++) {
+					newPiece.add(new THREE.Mesh(Pantalla.cone.children[j].geometry, Pantalla.cone.children[j].material));
+				}
+			
+				newPiece.position.set(-8 + i * 8, 2, -30);
+				newPiece.rotation.x = Math.PI / 2;
+				newPiece.scale.set(1.5,1.5,1.5);
+				Pantalla.coneList.push(newPiece);
+				Pantalla.holder.add(newPiece);
+			}
 		});
-		
 		
 		// Load Human model
 		var HumanLoader = new THREE.ColladaLoader();
@@ -195,7 +210,7 @@ var Pantalla = {
 		
 			// Set position and scale
 
-			Pantalla.Human.position.set(6, 4, -10.5);
+			Pantalla.Human.position.set(600, 4, -10.5);
 			Pantalla.Human.scale.set(1.5,1.5,1.5);
 
 			// Add the mesh into scene
@@ -204,20 +219,20 @@ var Pantalla = {
 		
 		
 	   // Load Cotxe low poly model
-		var CotxeLoader = new THREE.ColladaLoader();
-		CotxeLoader.options.convertUpAxis = true;
-		CotxeLoader.load('models/Car.dae', function(collada) {
-			Pantalla.Cotxe = collada.scene;
+		var carLowLoader = new THREE.ColladaLoader();
+		carLowLoader.options.convertUpAxis = true;
+		carLowLoader.load('models/Car.dae', function(collada) {
+			Pantalla.carLow = collada.scene;
 
 		
 			// Set position and scale
 			
 
-			Pantalla.Cotxe.position.set(6, 4, -25.5);
-			Pantalla.Cotxe.scale.set(1.5,1.5,1.5);
+			Pantalla.carLow.position.set(600, 4, -25.5);
+			Pantalla.carLow.scale.set(1.5,1.5,1.5);
 
 			// Add the mesh into scene
-			Pantalla.holder.add(Pantalla.Cotxe);
+			Pantalla.holder.add(Pantalla.carLow);
 		});
 
 		
@@ -230,7 +245,7 @@ var Pantalla = {
 		
 			// Set position and scale
 			Pantalla.Range.rotation.y = Math.PI / 2;
-			Pantalla.Range.position.set(-6, 1, 2.5);
+			Pantalla.Range.position.set(-600, 1, 2.5);
 			Pantalla.Range.scale.set(0.5,0.5,0.5);
 
 			// Add the mesh into scene
@@ -248,12 +263,13 @@ var Pantalla = {
 			Pantalla.cotxe = collada.scene;
 
 			// Set position and scale
-			Pantalla.cotxe.position.set(0, 1, k);
+			Pantalla.cotxe.position.set(0, 1, 14);
 			Pantalla.cotxe.rotation.y = Math.PI;
 			Pantalla.cotxe.scale.set(2.5, 2.5, 2.5);
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.cotxe);
+			Pantalla.raycaster = new THREE.Raycaster(Pantalla.cotxe.position, new THREE.Vector3(0,0,-1));
 		});
 		
 		// Moving holder
@@ -328,9 +344,17 @@ var Pantalla = {
 	// }
 };
 
+function spawn() {
+	if (Math.trunc(clock.getElapsedTime()) % 5 == 0) {
+		for (var i = 0; i < Pantalla.coneList.length; i++) {
+			Pantalla.coneList[i].position.z = -30
+		}
+	}
+}
+
 // Saltar:
 function jump() {
-	new TWEEN.Tween({jump: 0}).to({jump: Math.PI}, 500).onUpdate(function () {
+	new TWEEN.Tween({jump: 0}).to({jump: Math.PI}, 1000).onUpdate(function () {
 			Pantalla.cotxe.position.y = 10*Math.sin(this.jump);
 			if ( this.jump > 3.1 )
 				Pantalla.cotxe.is_jumping = false;
@@ -382,7 +406,21 @@ function update() {
 		// Pantalla.cotxe.translateX( moveDistance );
 	
 	Pantalla.stats.update();
-
+	spawn();
+	
+	//Translate bodies:
+	for (var i = 0; i < Pantalla.coneList.length; i++) {
+		Pantalla.coneList[i].position.z += 0.3;
+	}
+	
+	//Calculate collisions:
+	var intersects = Pantalla.Raycaster.intersectObjects( Pantalla.holder.children );
+	
+	for (var i = 0; i < intersects.length; i++) {
+		intersects[ i ].object.material.color.set( 0xff0000 );
+		console.log("He colissionat!");
+	}
+	
 	//THREE.AnimationHandler.update(delta);
 }
 
@@ -396,11 +434,11 @@ function render () {
 		renderer.render(Pantalla.scene, Pantalla.camera);
 	}
 		
-	Pantalla.anell.rotation.x +=0.01
-	Pantalla.anell.rotation.y +=0.01
-	Pantalla.cube.rotation.x += 0.01;
-	Pantalla.cube.rotation.y += 0.01;
-	Pantalla.esfera.rotation.y += 0.01;
+	// Pantalla.anell.rotation.x +=0.01
+	// Pantalla.anell.rotation.y +=0.01
+	// Pantalla.cube.rotation.x += 0.01;
+	// Pantalla.cube.rotation.y += 0.01;
+	// Pantalla.esfera.rotation.y += 0.01;
 }
 
 // Initialize lesson on page load
