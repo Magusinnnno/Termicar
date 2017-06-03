@@ -40,7 +40,7 @@ var Pantalla = {
 	clock: null, stats: null, esfera: null, anell: null,
 	cube: null, home: null, cotxe: null, robot: null,
 	stop: null, cone: null, Human: null, carLow: null,
-	Range: null, is_jumping:null, stopList: [], coneList: [],
+	Range: null, is_jumping:null, stopList: [], coneList: [], esferaList: [],
 	HumanList: [], carLowList: [], RangeList: [], raycaster: null,
 	
 	init: function() {
@@ -49,7 +49,7 @@ var Pantalla = {
 		this.scene = new THREE.Scene();
 		this.scene.fog = new THREE.FogExp2(0xc8e0ff, 0.0003);
 		this.Raycaster = new THREE.Raycaster();
-		this.WALK_SPEED=0.6;
+		this.WALK_SPEED=1.4;
 		this.entrar=false;
 		
 		// Create holder
@@ -84,21 +84,21 @@ var Pantalla = {
 
 		// Add lights
 		var pointLight = new THREE.PointLight( 0xFFFFFF );
-		pointLight.position.x = 10;
-		pointLight.position.y = 30;
+		pointLight.position.x = 20;
+		pointLight.position.y = 70;
 		pointLight.position.z = 20;
 		this.holder.add( pointLight );
 		
 		pointLight = new THREE.PointLight( 0xFFFFFF );
-		pointLight.position.x = -10;
-		pointLight.position.y = 30;
+		pointLight.position.x = -20;
+		pointLight.position.y = 70;
 		pointLight.position.z = 20;
 		this.holder.add( pointLight );
 		
 		pointLight = new THREE.PointLight( 0xFFFFFF );
-		pointLight.position.x = 0;
-		pointLight.position.y = 30;
-		pointLight.position.z = -30;
+		pointLight.position.x = -20;
+		pointLight.position.y = 70;
+		pointLight.position.z = -200;
 		this.holder.add( pointLight );
 		
 		//Add texture
@@ -147,7 +147,7 @@ var Pantalla = {
 			Pantalla.robot = collada.scene;
 
 			// Set position and scale
-			Pantalla.robot.position.set(0, 1, -25.5);
+			Pantalla.robot.position.set(600, 1, -25.5);
 			Pantalla.robot.scale.set(0.7, 0.7, 0.7);
 
 			// Add the mesh into scene
@@ -159,13 +159,13 @@ var Pantalla = {
 		var StopLoader = new THREE.ColladaLoader();
 		StopLoader.options.convertUpAxis = true;
 		StopLoader.load('models/stopsin.dae', function(collada) {
-			Pantalla.stop = collada.scene.children[0];
+			Pantalla.stop = collada.scene;
 
 
 		
 			// Set position and scale
 			Pantalla.stop.rotation.y =- Math.PI / 2;
-			Pantalla.stop.position.set(-600, 2, -10.5);
+			Pantalla.stop.position.set(4, 6, 600);
 			Pantalla.stop.scale.set(2,2,2);
 
 			// Add the mesh into scene
@@ -367,20 +367,30 @@ var Pantalla = {
 function spawn() {
 	
 	if (Math.trunc(clock.getElapsedTime()) % 5== 0 && Pantalla.entrar==false) {
-		var num = Math.trunc(Math.random() * 3 + 1);
-		switch(3) {
+		var num = Math.trunc(Math.random() * 4 + 1);
+		switch(num) {
 			case 1:
 				for (var i = 0; i < Pantalla.coneList.length; i++) {
-					Pantalla.coneList[i].position.z = -90;
+					Pantalla.coneList[i].position.z = -160;
 				}
 				break;
 			case 2:
+				var carril = Math.trunc(Math.random() * 2 + 1);
 				if (Pantalla.Range != null) {
-					Pantalla.Range.position.z = -90;
+					switch(carril){
+						case 1:
+							Pantalla.Range.position.x=4
+							break;
+						case 2:
+							Pantalla.Range.position.x=-4
+							break;
+						default:
+							break;
+					}
+					Pantalla.Range.position.z = -160;
 				}
 				break;
 			case 3:
-				var carril = Math.trunc(Math.random() * 3 + 1);
 				if (Pantalla.carLow != null) {
 					switch(carril) {
 						case 1:
@@ -395,18 +405,27 @@ function spawn() {
 						default:
 							break;
 					}
-					Pantalla.carLow.position.z = -90;
+					Pantalla.carLow.position.z = -160;
 
 				}
 				break;
 			case 4:
-				if (Pantalla.Range != null) {
-					Pantalla.Range.position.z = -90;
-				}
-				break;
-			case 5:
-				if (Pantalla.Range != null) {
-					Pantalla.Range.position.z = -90;
+				if (Pantalla.stop != null) {
+					var carril = Math.trunc(Math.random() * 3 + 1);
+					Pantalla.stop.position.z = -160;
+					switch(carril) {
+						case 1:
+							Pantalla.stop.position.x = -8;
+							break;
+						case 2:
+							Pantalla.stop.position.x = 0;
+							break;
+						case 3:
+							Pantalla.stop.position.x = 8;
+							break;
+						default:
+							break;
+					}
 				}
 				break;
 			default:
@@ -498,6 +517,9 @@ function update() {
 	}
 	if (Pantalla.carLow != null) {
 		Pantalla.carLow.position.z+=Pantalla.WALK_SPEED;
+	}
+	if (Pantalla.stop != null) {
+		Pantalla.stop.position.z+=Pantalla.WALK_SPEED;
 	}
 	//Calculate collisions:
 	var intersects = Pantalla.Raycaster.intersectObjects( Pantalla.holder.children );
