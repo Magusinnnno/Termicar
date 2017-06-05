@@ -140,11 +140,12 @@ var Pantalla = {
 			var geometriaEsfera = new THREE.SphereGeometry(1, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
 			var materialEsfera = new THREE.MeshNormalMaterial();
 			var esfera = new THREE.Mesh( geometriaEsfera, materialEsfera );		
-			esfera.position.z = -460+i*40;
+			esfera.position.z = -440+i*40;
 			esfera.position.x = 600;
 			esfera.position.y = 2;
 			this.esferaList.push(esfera);
 			this.holder.add( esfera );
+			esfera.visible=false;
 		}
 		
 		// Load Dae models
@@ -211,6 +212,7 @@ var Pantalla = {
 		HumanLoader.options.convertUpAxis = true;
 		HumanLoader.load('models/human_man_1.2.dae', function(collada) {
 			Pantalla.Human = collada.scene;
+
 		
 			// Set position and scale
 			Pantalla.Human.position.set(600, 4, -10.5);
@@ -227,20 +229,26 @@ var Pantalla = {
 		carLowLoader.load('models/Car.dae', function(collada) {
 			Pantalla.carLow = collada.scene;
 
+		
 			// Set position and scale
+			
+
 			Pantalla.carLow.position.set(-8, 2.8, 600.0);
 			Pantalla.carLow.scale.set(2.3,3.5,1.8);
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.carLow);
+			
 		});
 
+		
 	   // Load RangeRover model
 		var RangeLoader = new THREE.ColladaLoader();
 		RangeLoader.options.convertUpAxis = true;
 		RangeLoader.load('models/RangeRover.dae', function(collada) {
 			Pantalla.Range = collada.scene;
 
+		
 			// Set position and scale
 			Pantalla.Range.rotation.y = Math.PI / 2;
 			Pantalla.Range.position.set(4, 0.5, 600);
@@ -248,6 +256,8 @@ var Pantalla = {
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.Range);
+			
+			
 		});
 		
 		// Load Car model
@@ -263,7 +273,7 @@ var Pantalla = {
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.cotxe);
-			//Pantalla.raycaster = new THREE.Raycaster(Pantalla.cotxe.position, new THREE.Vector3(0,0,-1));
+			Pantalla.raycaster = new THREE.Raycaster(Pantalla.cotxe.position, new THREE.Vector3(0,0,-1));
 		});
 		
 		// Moving holder
@@ -274,42 +284,7 @@ var Pantalla = {
 		this.scene.add( this.holder );
 		this.is_jumping = false;
 	},
-	
-	collision: function() {
-		this.dummyMesh.position.x = this.cotxe.position.x;
-		this.dummyMesh.position.y = this.cotxe.position.y;
-		this.dummyMesh.position.z = this.cotxe.position.z;
-		
-		this.dummyMesh.rotation.x = this.cotxe.rotation.x;
-		this.dummyMesh.rotation.y = this.cotxe.rotation.y;
-        this.dummyMesh.rotation.z = this.cotxe.rotation.z;
-		
-		this.dummyMesh.translateZ(this.WALK_SPEED)
-		
-		var distance = 64
-		
-		var obstacles = Pantalla.getObstacles();
-		
-		Pantalla.Raycaster.set(this.dummyMesh.position, new THREE.Vector3(this.dummyMesh.position.x, this.dummyMesh.position.y, this.dummyMesh.position.z));
-		
-		var colisio = Pantalla.Raycaster.IntersectObjects(obstacles);
-		
-		if (colisio.length > 0 && colisio[0].distance <= distance) {
-            return false;
-        } else {
-            return true;
-        }
-	},
-	
-	getObstacles: function() {
-		this.obstacleList = []
-		this.obstacleList.concat(this.coneList);
-		this.obstacleList.concat(this.carLowList);
-		this.obstacleList.concat(this.RangeList);
-		this.obstacleList.concat(this.stopList);
-		return this.obstacleList
-	},
-	
+
 	// loadJsonModel: function() {
 
 		// // Prepare JSONLoader
@@ -470,17 +445,52 @@ function spawn() {
 						default:
 							break;
 					}
-					Pantalla.robot.position.z = -160;
-					Pantalla.Human.position.z = -160;
+					Pantalla.robot.position.z = -180;
+					Pantalla.Human.position.z = -180;
 				}
 			default:
 				break;
 		}
 		Pantalla.entrar = true;
+		// if ()==1){
+			// for (var i = 0; i < Pantalla.coneList.length; i++) {
+				// Pantalla.coneList[i].position.z = -90;
+				
+			// }
+			// console.log("puamerda")
+			// entrar=false;
+		// }
+		// else{
+			// if (Pantalla.Range != null) {
+				// Pantalla.Range.position.z = -90;
+			// }
+			// entrar=false;
+		// }
 	}
 	else if(Math.trunc(clock.getElapsedTime()) % 5 != 0){
 		Pantalla.entrar=false;
 	}
+	/*if(Math.trunc(clock.getElapsedTime()) % 1 == 0 && Pantalla.entrar==false){
+		var num = Math.trunc(Math.random() * 3 + 1);
+		switch(num) {
+			case 1:
+				Pantalla.esfera.position.x=8;
+				Pantalla.esfera.position.z=-90;
+				break;
+			case 2:
+				Pantalla.esfera.position.x=0;
+				Pantalla.esfera.position.z=-90;
+				break;
+			case 3:
+				Pantalla.esfera.position.x=-8;
+				Pantalla.esfera.position.z=-90;
+				break;
+			default:
+				break;
+		}
+
+
+	}*/
 }
 
 // Saltar:
@@ -503,7 +513,7 @@ function animate() {
 }
 
 function update() {
-	// var delta = Pantalla.clock.getDelta();
+	var delta = Pantalla.clock.getDelta();
 	// console.log('Eix X: ' + Pantalla.cotxe.position.x);
 	// console.log('Eix Y: ' + Pantalla.camera.position.y);
 	// console.log('Eix Z: ' + Pantalla.camera.position.z);
@@ -561,20 +571,21 @@ function update() {
 	for(var i=0;i<7;i++){
 		if(Pantalla.esferaList[i]!=null){
 			Pantalla.esferaList[i].position.z+=Pantalla.WALK_SPEED;
-			if(Pantalla.esferaList[i].position.z>=+180){
+			if(Pantalla.esferaList[i].position.z>=+160){
+				Pantalla.esferaList[i].visible=true;
 				var num = Math.trunc(Math.random() * 3 + 1);
 				switch(num) {
 					case 1:
-						Pantalla.esferaList[i].position.x=6;
-						Pantalla.esferaList[i].position.z=-120;
+						Pantalla.esferaList[i].position.x=7;
+						Pantalla.esferaList[i].position.z=-140;
 						break;
 					case 2:
 						Pantalla.esferaList[i].position.x=0;
-						Pantalla.esferaList[i].position.z=-120;
+						Pantalla.esferaList[i].position.z=-140;
 						break;
 					case 3:
-						Pantalla.esferaList[i].position.x=-6;
-						Pantalla.esferaList[i].position.z=-120;
+						Pantalla.esferaList[i].position.x=-7;
+						Pantalla.esferaList[i].position.z=-140;
 						break;
 					default:
 						break;
@@ -582,12 +593,16 @@ function update() {
 			}
 		}
 	}
-	//Calculate collisions:
-	var intersects = Pantalla.Raycaster.intersectObjects( Pantalla.holder.children );
-	
-	for (var i = 0; i < intersects.length; i++) {
-		intersects[ i ].object.material.color.set( 0xff0000 );
-		console.log("He colissionat!");
+	//Calculate collisions:	
+	if(Pantalla.cotxe!=null && Pantalla.esferaList[6]!=null){
+		for (var i = 0; i < 7; i++) {
+			if(Math.trunc(Pantalla.esferaList[i].position.x)==Pantalla.cotxe.position.x){
+				if(Math.trunc(Pantalla.esferaList[i].position.z)==Pantalla.cotxe.position.z-3){
+					Pantalla.esferaList[i].visible=false;
+					console.log("He colissionat!");
+				}
+			}
+		}
 	}
 	
 	//THREE.AnimationHandler.update(delta);
