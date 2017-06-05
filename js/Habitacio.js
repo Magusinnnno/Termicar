@@ -16,6 +16,8 @@ var newTime = new Date().getTime();
 var oldTime = new Date().getTime();
 var fieldDistance;
 var fieldPunts;
+var fieldHighscore;
+var fieldMaxDist;
 
 // Create your background scene
 var Background = {
@@ -46,6 +48,7 @@ var Pantalla = {
 	Range: null, distance:0, punts: 0, is_jumping:null,
 	stopList: [], coneList: [], esferaList: [], HumanList: [],
 	carLowList: [], RangeList: [], obstacleList: [], status : "gameover",
+	highScore: 0, highDist: 0,
 	
 	init: function() {
 
@@ -398,12 +401,33 @@ function updatePunts() {
 	fieldPunts.innerHTML = Pantalla.punts;
 }
 
+function updateHighscore() {
+	fieldHighscore.innerHTML = Pantalla.highScore;
+}
+
+function updateMaxDist() {
+	fieldMaxDist.innerHTML = Math.floor(Pantalla.highDist);
+}
+
 function showReplay(){
   replayMessage.style.display="block";
 }
 
 function hideReplay(){
   replayMessage.style.display="none";
+}
+
+function end() {
+	Pantalla.status = "gameover";
+	showReplay();
+	if (Pantalla.punts > Pantalla.highScore) {
+		Pantalla.highScore = Pantalla.punts;
+		updateHighscore();
+	}
+	if (Pantalla.distance > Pantalla.highDist) {
+		Pantalla.highDist = Pantalla.distance;
+		updateMaxDist();
+	}
 }
 
 function update() {
@@ -444,8 +468,7 @@ function update() {
 				if(Pantalla.coneList[i].position.x==Pantalla.cotxe.position.x){
 					if(Pantalla.coneList[i].position.y+2>=Pantalla.cotxe.position.y){
 						Pantalla.coneList[i].visible=false;
-						Pantalla.status = "gameover";
-						showReplay();
+						end();
 					}
 				}
 			}
@@ -457,15 +480,13 @@ function update() {
 				if(Pantalla.Range.position.x==4){
 					if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.position.x==7){
 						Pantalla.Range.visible=false;
-						Pantalla.status = "gameover";
-						showReplay();
+						end();
 					}
 				}
 				else if(Pantalla.Range.position.x==-4){
 					if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.position.x==-7){
 						Pantalla.Range.visible=false;
-						Pantalla.status = "gameover";
-						showReplay();
+						end();
 					}
 				}
 			}
@@ -475,8 +496,7 @@ function update() {
 			if( Math.trunc(Pantalla.carLow.position.z)== Math.trunc(Pantalla.cotxe.position.z)-13){
 				if(Pantalla.carLow.position.x==Pantalla.cotxe.position.x){
 					Pantalla.carLow.visible=false;
-					Pantalla.status = "gameover";
-					showReplay();
+					end();
 				}
 			}
 		}
@@ -485,8 +505,7 @@ function update() {
 			if( Math.trunc(Pantalla.stop.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
 				if(Pantalla.stop.position.x==Pantalla.cotxe.position.x){
 					Pantalla.stop.visible=false;
-					Pantalla.status = "gameover";
-					showReplay();
+					end();
 				}
 			}
 		}
@@ -580,6 +599,8 @@ function initialize() {
 	//Interfície
 	fieldDistance = document.getElementById("distValue");
 	fieldPunts = document.getElementById("puntsValue");
+	fieldHighscore = document.getElementById("highscoreValue");
+	fieldMaxDist = document.getElementById("maxdistValue");
 	
 	Background.init();
 	animate();
