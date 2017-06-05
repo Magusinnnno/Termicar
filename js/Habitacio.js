@@ -267,7 +267,7 @@ var Pantalla = {
 			Pantalla.cotxe = collada.scene;
 
 			// Set position and scale
-			Pantalla.cotxe.position.set(0, 1, 14);
+			Pantalla.cotxe.position.set(0, 0, 14);
 			Pantalla.cotxe.rotation.y = Math.PI;
 			Pantalla.cotxe.scale.set(2.5, 2.5, 2.5);
 
@@ -598,8 +598,11 @@ function update() {
 		for (var i = 0; i < 7; i++) {
 			if(Math.trunc(Pantalla.esferaList[i].position.x)==Pantalla.cotxe.position.x){
 				if(Math.trunc(Pantalla.esferaList[i].position.z)==Pantalla.cotxe.position.z-3){
-					Pantalla.esferaList[i].visible=false;
-					console.log("He colissionat!");
+					console.log(Math.trunc(Pantalla.cotxe.position.y));
+					if(Math.trunc(Pantalla.esferaList[i].position.y)==Math.trunc(Pantalla.cotxe.position.y)+2){
+						Pantalla.esferaList[i].visible=false;
+						console.log("He colissionat!");
+					}
 				}
 			}
 		}
