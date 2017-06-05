@@ -346,10 +346,12 @@ function spawn() {
 		switch(num) {
 			case 1:
 				for (var i = 0; i < Pantalla.coneList.length; i++) {
+					Pantalla.coneList[i].visible=true;
 					Pantalla.coneList[i].position.z = -160;
 				}
 				break;
 			case 2:
+				Pantalla.Range.visible=true;
 				var carril = Math.trunc(Math.random() * 2 + 1);
 				if (Pantalla.Range != null) {
 					switch(carril){
@@ -367,36 +369,39 @@ function spawn() {
 				break;
 			case 3:
 				if (Pantalla.carLow != null) {
+					Pantalla.carLow.visible=true;
 					var carril = Math.trunc(Math.random() * 2 + 1);
 					switch(carril) {
 						case 1:
-							Pantalla.carLow.position.x = -8;
+							Pantalla.carLow.position.x = -7;
 							break;
 						case 2:
 							Pantalla.carLow.position.x = 0;
 							break;
 						case 3:
-							Pantalla.carLow.position.x = 8;
+							Pantalla.carLow.position.x = 7;
 							break;
 						default:
 							break;
 					}
 					Pantalla.carLow.position.z = -160;
+
 				}
 				break;
 			case 4:
 				if (Pantalla.stop != null) {
+					Pantalla.stop.visible=true;
 					var carril = Math.trunc(Math.random() * 3 + 1);
 					Pantalla.stop.position.z = -160;
 					switch(carril) {
 						case 1:
-							Pantalla.stop.position.x = -8;
+							Pantalla.stop.position.x = -7;
 							break;
 						case 2:
 							Pantalla.stop.position.x = 0;
 							break;
 						case 3:
-							Pantalla.stop.position.x = 8;
+							Pantalla.stop.position.x = 7;
 							break;
 						default:
 							break;
@@ -407,37 +412,39 @@ function spawn() {
 				if (Pantalla.robot != null && Pantalla.Human != null) {
 					var carril = Math.trunc(Math.random() * 3 + 1);
 					var carril2 = Math.trunc(Math.random() * 3 + 1);
+					Pantalla.robot.visible=true;
+					Pantalla.Human.visible=true;
 					while (carril2 == carril) {
 						carril2 = Math.trunc(Math.random() * 3 + 1);
 					}
 					switch(carril) {
 						case 1:
-							Pantalla.robot.position.x = -8;
+							Pantalla.robot.position.x = -7;
 							break;
 						case 2:
 							Pantalla.robot.position.x = 0;
 							break;
 						case 3:
-							Pantalla.robot.position.x = 8;
+							Pantalla.robot.position.x = 7;
 							break;
 						default:
 							break;
 					}
 					switch(carril2) {
 						case 1:
-							Pantalla.Human.position.x = -8;
+							Pantalla.Human.position.x = -7;
 							break;
 						case 2:
-							Pantalla.Human.position.x = -2;
+							Pantalla.Human.position.x = 0;
 							break;
 						case 3:
-							Pantalla.Human.position.x = 5;
+							Pantalla.Human.position.x = 7;
 							break;
 						default:
 							break;
 					}
-					Pantalla.robot.position.z = -180;
-					Pantalla.Human.position.z = -180;
+					Pantalla.robot.position.z = -160;
+					Pantalla.Human.position.z = -160;
 				}
 			default:
 				break;
@@ -516,21 +523,65 @@ function update() {
 	//Translate bodies:
 	for (var i = 0; i < Pantalla.coneList.length; i++) {
 		Pantalla.coneList[i].position.z += Pantalla.WALK_SPEED;
+		if( Math.trunc(Pantalla.coneList[i].position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
+			if(Pantalla.coneList[i].position.x==Pantalla.cotxe.position.x){
+				if(Pantalla.coneList[i].position.y+2>=Pantalla.cotxe.position.y){
+					Pantalla.coneList[i].visible=false;
+				}
+			}
+		}
+		
 	}
-	if (Pantalla.Range != null) {
+	if (Pantalla.Range != null && Pantalla.cotxe!=null) {
 		Pantalla.Range.position.z+=Pantalla.WALK_SPEED;
+		if( Math.trunc(Pantalla.Range.position.z)== Math.trunc(Pantalla.cotxe.position.z)-13){
+			if(Pantalla.Range.position.x==4){
+				if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.positionx.x==7){
+					Pantalla.Range.visible=false;
+				}
+			}
+			else if(Pantalla.Range.position.x==-4){
+				if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.positionx.x==-7){
+					Pantalla.Range.visible=false;
+				}
+			}
+		}
 	}
-	if (Pantalla.carLow != null) {
+	if (Pantalla.carLow != null && Pantalla.cotxe!=null) {
 		Pantalla.carLow.position.z+=Pantalla.WALK_SPEED;
+		if( Math.trunc(Pantalla.carLow.position.z)== Math.trunc(Pantalla.cotxe.position.z)-13){
+			if(Pantalla.carLow.position.x==Pantalla.cotxe.position.x){
+				Pantalla.carLow.visible=false;
+			}
+		}
 	}
-	if (Pantalla.stop != null) {
+	if (Pantalla.stop != null && Pantalla.cotxe!=null) {
 		Pantalla.stop.position.z+=Pantalla.WALK_SPEED;
+		if( Math.trunc(Pantalla.stop.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
+			if(Pantalla.stop.position.x==Pantalla.cotxe.position.x){
+				Pantalla.stop.visible=false;
+			}
+		}
 	}
-	if (Pantalla.robot != null) {
+	if (Pantalla.robot != null && Pantalla.cotxe!=null) {
 		Pantalla.robot.position.z+=Pantalla.WALK_SPEED;
+		if( Math.trunc(Pantalla.robot.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
+			if(Pantalla.robot.position.x==Pantalla.cotxe.position.x){
+				if(Pantalla.robot.position.y+2>=Pantalla.cotxe.position.y){
+					Pantalla.robot.visible=false;
+				}
+			}
+		}
 	}
-	if (Pantalla.Human != null) {
+	if (Pantalla.Human != null && Pantalla.cotxe!=null) {
 		Pantalla.Human.position.z+=Pantalla.WALK_SPEED;
+		if( Math.trunc(Pantalla.Human.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
+			if(Pantalla.Human.position.x==Pantalla.cotxe.position.x){
+				if(Pantalla.Human.position.y>=Pantalla.cotxe.position.y){
+					Pantalla.Human.visible=false;
+				}
+			}
+		}
 	}
 	for(var i=0;i<7;i++){
 		if(Pantalla.esferaList[i]!=null){
