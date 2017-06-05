@@ -52,7 +52,7 @@ header a, a:visited {
 	vertical-align: top;
 }
 
-.score__content:nth-child(2) {
+.score__content:nth-child(2n) {
 	border-right: 1px solid #d1b790;
 	border-left: 1px solid #d1b790;
 }
@@ -78,6 +78,14 @@ header a, a:visited {
 }
 
 .score__value--punts {
+	font-size: 30px;
+}
+
+.score__value--highscore {
+	font-size: 30px;
+}
+
+.score__value--maxdistance {
 	font-size: 30px;
 }
 
