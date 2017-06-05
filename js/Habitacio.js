@@ -40,8 +40,9 @@ var Pantalla = {
 	clock: null, stats: null, esfera: null, anell: null,
 	cube: null, home: null, cotxe: null, robot: null,
 	stop: null, cone: null, Human: null, carLow: null,
-	Range: null, is_jumping:null, stopList: [], coneList: [], esferaList: [],
-	HumanList: [], carLowList: [], RangeList: [], raycaster: null,
+	Range: null, is_jumping:null, stopList: [], coneList: [],
+	esferaList: [], HumanList: [], carLowList: [], RangeList: [],
+	raycaster: null, obstacleList: [],
 	
 	init: function() {
 
@@ -67,9 +68,9 @@ var Pantalla = {
 		THREEx.WindowResize(renderer, this.camera);
 
 		// Prepare Orbit controls
-		this.controls = new THREE.OrbitControls(this.camera);
-		this.controls.target = new THREE.Vector3(0, 0, 0);
-		this.controls.maxDistance = 150;
+		// this.controls = new THREE.OrbitControls(this.camera);
+		// this.controls.target = new THREE.Vector3(0, 0, 0);
+		// this.controls.maxDistance = 150;
 
 		// Prepare clock
 		this.clock = new THREE.Clock();
@@ -133,11 +134,8 @@ var Pantalla = {
 		
 		// Load Json model
 		//this.loadJsonModel();
-
-		// Load Dae model
 		
-		// Load Robot model
-		
+		// Create spheres
 		for(var i=0;i<7;i++){
 			var geometriaEsfera = new THREE.SphereGeometry(1, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
 			var materialEsfera = new THREE.MeshNormalMaterial();
@@ -149,8 +147,8 @@ var Pantalla = {
 			this.holder.add( esfera );
 		}
 		
-		
-		
+		// Load Dae models
+		// Load Robot model
 		var robotLoader = new THREE.ColladaLoader();
 		robotLoader.options.convertUpAxis = true;
 		robotLoader.load('models/robot.dae', function(collada) {
@@ -171,8 +169,6 @@ var Pantalla = {
 		StopLoader.load('models/stopsin.dae', function(collada) {
 			Pantalla.stop = collada.scene;
 
-
-		
 			// Set position and scale
 			Pantalla.stop.rotation.y =- Math.PI / 2;
 			Pantalla.stop.position.set(4, 6, 600);
@@ -180,11 +176,7 @@ var Pantalla = {
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.stop);
-	
 		});
-		
-		
-		
 		
 		// Load Cone model
 		var ConeLoader = new THREE.ColladaLoader();
@@ -218,30 +210,15 @@ var Pantalla = {
 		var HumanLoader = new THREE.ColladaLoader();
 		HumanLoader.options.convertUpAxis = true;
 		HumanLoader.load('models/human_man_1.2.dae', function(collada) {
-			Pantalla.Human = collada.scene.children[0];
+			Pantalla.Human = collada.scene;
 
 		
 			// Set position and scale
-
 			Pantalla.Human.position.set(600, 4, -10.5);
 			Pantalla.Human.scale.set(1.5,1.5,1.5);
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.Human);
-			for (var i = 0; i < 3; i++) {
-				var newPiece = new THREE.Object3D();
-				
-				for (var j = 0; j < Pantalla.stop.children.length; j++) {
-						newPiece.add(new THREE.Mesh(Pantalla.stop.children[j].geometry, Pantalla.stop.children[j].material))
-					
-				}
-			
-				newPiece.position.set(0, 2, -30);
-				newPiece.rotation.x = Math.PI / 2;
-				newPiece.scale.set(1.5,1.5,1.5);
-				Pantalla.stopList.push(newPiece);
-				Pantalla.holder.add(newPiece);
-			}
 		});
 		
 		
@@ -281,10 +258,6 @@ var Pantalla = {
 			
 			
 		});
-
-		
-		
-		
 		
 		// Load Car model
 		var cotxeLoader = new THREE.ColladaLoader();
@@ -375,9 +348,8 @@ var Pantalla = {
 };
 
 function spawn() {
-	
 	if (Math.trunc(clock.getElapsedTime()) % 5== 0 && Pantalla.entrar==false) {
-		var num = Math.trunc(Math.random() * 4 + 1);
+		var num = Math.trunc(Math.random() * 5 + 1);
 		switch(num) {
 			case 1:
 				for (var i = 0; i < Pantalla.coneList.length; i++) {
@@ -402,6 +374,7 @@ function spawn() {
 				break;
 			case 3:
 				if (Pantalla.carLow != null) {
+					var carril = Math.trunc(Math.random() * 2 + 1);
 					switch(carril) {
 						case 1:
 							Pantalla.carLow.position.x = -8;
@@ -438,6 +411,42 @@ function spawn() {
 					}
 				}
 				break;
+			case 5:
+				if (Pantalla.robot != null && Pantalla.Human != null) {
+					var carril = Math.trunc(Math.random() * 3 + 1);
+					var carril2 = Math.trunc(Math.random() * 3 + 1);
+					while (carril2 == carril) {
+						carril2 = Math.trunc(Math.random() * 3 + 1);
+					}
+					switch(carril) {
+						case 1:
+							Pantalla.robot.position.x = -8;
+							break;
+						case 2:
+							Pantalla.robot.position.x = 0;
+							break;
+						case 3:
+							Pantalla.robot.position.x = 8;
+							break;
+						default:
+							break;
+					}
+					switch(carril2) {
+						case 1:
+							Pantalla.Human.position.x = -8;
+							break;
+						case 2:
+							Pantalla.Human.position.x = -2;
+							break;
+						case 3:
+							Pantalla.Human.position.x = 5;
+							break;
+						default:
+							break;
+					}
+					Pantalla.robot.position.z = -160;
+					Pantalla.Human.position.z = -160;
+				}
 			default:
 				break;
 		}
@@ -507,7 +516,7 @@ function update() {
 	// console.log('Eix X: ' + Pantalla.cotxe.position.x);
 	// console.log('Eix Y: ' + Pantalla.camera.position.y);
 	// console.log('Eix Z: ' + Pantalla.camera.position.z);
-	Pantalla.controls.update(delta);
+	// Pantalla.controls.update(delta);
 	keyboard.update();
 
 	// var moveDistance = 50 * clock.getDelta(); 
@@ -551,6 +560,12 @@ function update() {
 	}
 	if (Pantalla.stop != null) {
 		Pantalla.stop.position.z+=Pantalla.WALK_SPEED;
+	}
+	if (Pantalla.robot != null) {
+		Pantalla.robot.position.z+=Pantalla.WALK_SPEED;
+	}
+	if (Pantalla.Human != null) {
+		Pantalla.Human.position.z+=Pantalla.WALK_SPEED;
 	}
 	for(var i=0;i<7;i++){
 		if(Pantalla.esferaList[i]!=null){
