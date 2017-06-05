@@ -16,7 +16,7 @@ var deltaTime = 0;
 var newTime = new Date().getTime();
 var oldTime = new Date().getTime();
 var fieldDistance;
-var punts;
+var fieldPunts;
 
 // Create your background scene
 var Background = {
@@ -44,16 +44,15 @@ var Pantalla = {
 	clock: null, stats: null, esfera: null, anell: null,
 	cube: null, home: null, cotxe: null, robot: null,
 	stop: null, cone: null, Human: null, carLow: null,
-	Range: null, distance:0, is_jumping:null, stopList: [],
-	coneList: [], esferaList: [], HumanList: [], carLowList: [],
-	RangeList: [], raycaster: null, obstacleList: [],
+	Range: null, distance:0, punts: 0, is_jumping:null,
+	stopList: [], coneList: [], esferaList: [], HumanList: [],
+	carLowList: [], RangeList: [], obstacleList: [],
 	
 	init: function() {
 
 		// Create main scene
 		this.scene = new THREE.Scene();
 		this.scene.fog = new THREE.FogExp2(0xc8e0ff, 0.0003);
-		this.Raycaster = new THREE.Raycaster();
 		this.WALK_SPEED=1.4;
 		this.entrar=false;
 		
@@ -476,8 +475,12 @@ function animate() {
 }
 
 function updateDistance(){
-  Pantalla.distance += Pantalla.WALK_SPEED*deltaTime;
+  Pantalla.distance += Pantalla.WALK_SPEED*deltaTime / 100;
   fieldDistance.innerHTML = Math.floor(Pantalla.distance);
+}
+
+function updatePunts() {
+	fieldPunts.innerHTML = Pantalla.punts;
 }
 
 function update() {
@@ -519,6 +522,7 @@ function update() {
 	Pantalla.stats.update();
 	spawn();
 	updateDistance();
+	updatePunts();
 	
 	//Translate bodies:
 	for (var i = 0; i < Pantalla.coneList.length; i++) {
@@ -613,10 +617,9 @@ function update() {
 		for (var i = 0; i < 7; i++) {
 			if(Math.trunc(Pantalla.esferaList[i].position.x)==Pantalla.cotxe.position.x){
 				if(Math.trunc(Pantalla.esferaList[i].position.z)==Pantalla.cotxe.position.z-3){
-					console.log(Math.trunc(Pantalla.cotxe.position.y));
 					if(Math.trunc(Pantalla.esferaList[i].position.y)==Math.trunc(Pantalla.cotxe.position.y)+2){
 						Pantalla.esferaList[i].visible=false;
-						console.log("He colissionat!");
+						Pantalla.punts += 1;
 					}
 				}
 			}
@@ -649,7 +652,7 @@ function initialize() {
 	
 	//Interfície
 	fieldDistance = document.getElementById("distValue");
-	punts = document.getElementById("punts");
+	fieldPunts = document.getElementById("puntsValue");
 	
 	Background.init();
 	animate();
