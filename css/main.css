@@ -89,6 +89,10 @@ header a, a:visited {
 	font-size: 30px;
 }
 
+.score__value--scoredistance {
+	font-size: 30px;
+}
+
 .message {
 	font-weight: bold;
 	position: absolute;
