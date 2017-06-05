@@ -211,7 +211,6 @@ var Pantalla = {
 		HumanLoader.options.convertUpAxis = true;
 		HumanLoader.load('models/human_man_1.2.dae', function(collada) {
 			Pantalla.Human = collada.scene;
-
 		
 			// Set position and scale
 			Pantalla.Human.position.set(600, 4, -10.5);
@@ -228,26 +227,20 @@ var Pantalla = {
 		carLowLoader.load('models/Car.dae', function(collada) {
 			Pantalla.carLow = collada.scene;
 
-		
 			// Set position and scale
-			
-
 			Pantalla.carLow.position.set(-8, 2.8, 600.0);
 			Pantalla.carLow.scale.set(2.3,3.5,1.8);
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.carLow);
-			
 		});
 
-		
 	   // Load RangeRover model
 		var RangeLoader = new THREE.ColladaLoader();
 		RangeLoader.options.convertUpAxis = true;
 		RangeLoader.load('models/RangeRover.dae', function(collada) {
 			Pantalla.Range = collada.scene;
 
-		
 			// Set position and scale
 			Pantalla.Range.rotation.y = Math.PI / 2;
 			Pantalla.Range.position.set(4, 0.5, 600);
@@ -255,8 +248,6 @@ var Pantalla = {
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.Range);
-			
-			
 		});
 		
 		// Load Car model
@@ -272,7 +263,7 @@ var Pantalla = {
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.cotxe);
-			Pantalla.raycaster = new THREE.Raycaster(Pantalla.cotxe.position, new THREE.Vector3(0,0,-1));
+			//Pantalla.raycaster = new THREE.Raycaster(Pantalla.cotxe.position, new THREE.Vector3(0,0,-1));
 		});
 		
 		// Moving holder
