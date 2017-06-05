@@ -6,7 +6,6 @@ document.body.appendChild(container);
 // Global renderer
 var renderer = new THREE.WebGLRenderer({ antialias:true });
 renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-// renderer.setClearColor( 0xffffff, 1 );
 renderer.setPixelRatio( window.devicePixelRatio );
 container.appendChild(renderer.domElement);
 
@@ -46,7 +45,7 @@ var Pantalla = {
 	stop: null, cone: null, Human: null, carLow: null,
 	Range: null, distance:0, punts: 0, is_jumping:null,
 	stopList: [], coneList: [], esferaList: [], HumanList: [],
-	carLowList: [], RangeList: [], obstacleList: [],
+	carLowList: [], RangeList: [], obstacleList: [], status : "gameover",
 	
 	init: function() {
 
@@ -64,7 +63,6 @@ var Pantalla = {
 		this.camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 		this.scene.add(this.camera);
 		this.camera.position.set(-8, 2.5, 29);
-		//this.camera.position.set(0, 14.5, 24);
 		this.camera.lookAt(new THREE.Vector3(0,0,0));
 
 		// Events
@@ -117,27 +115,6 @@ var Pantalla = {
 		});
 		
 		// Create objects
-		// var geometriaCaixa = new THREE.BoxGeometry( 1, 1, 1 );
-
-		// var geometriaAnell = new THREE.RingGeometry( 1, 1.2, 32 );
-		// var materialCaixa = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
-		// var materialAnell =  new THREE.MeshLambertMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
-
-		// this.anell= new THREE.Mesh( geometriaAnell, materialAnell);
-		// this.cube = new THREE.Mesh( geometriaCaixa, materialCaixa );
-		
-		// this.holder.add( this.cube );
-		// this.holder.add( this.anell );
-		
-		// this.cube.position.x = -4;
-		// this.cube.position.y = 4;
-		// this.cube.position.z = 14;
-		// this.anell.position.y = 4;
-		// this.anell.position.z = -14;
-		
-		// Load Json model
-		//this.loadJsonModel();
-		
 		// Create spheres
 		for(var i=0;i<7;i++){
 			var geometriaEsfera = new THREE.SphereGeometry(1, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
@@ -275,68 +252,6 @@ var Pantalla = {
 		this.scene.add( this.holder );
 		this.is_jumping = false;
 	},
-
-	// loadJsonModel: function() {
-
-		// // Prepare JSONLoader
-		// var jsonLoader = new THREE.JSONLoader();
-		// jsonLoader.load('models/Home.json', function(geometry, materials) {
-
-			// materials.forEach(function(mat) {
-				// mat.skinning = true;
-			// });
-
-			// // Prepare SkinnedMesh with MeshFaceMaterial (using original texture)
-			// var modelMesh = new THREE.SkinnedMesh(
-				// geometry, new THREE.MeshFaceMaterial(materials)
-			// );
-
-			// // Set position and scale
-			// var scale = 40;
-			// modelMesh.position.set(0, -1, -2.5);
-			// modelMesh.scale.set(scale, scale, scale);
-
-			// // Prepare animation
-			// // var animation = new THREE.Animation(
-				// // modelMesh, geometry.animations[0],
-				// // THREE.AnimationHandler.CATMULLROM
-			// // );
-
-			// // Add the mesh and play the animation
-			// Pantalla.holder.add(modelMesh);
-			// //animation.play();
-		// });
-
-	// },
-	// loadDaeModel: function(daeLocation, x, z, scale, y=1, rot=false) {
-
-		// // Prepare ColladaLoader
-		// var daeLoader = new THREE.ColladaLoader();
-		// daeLoader.options.convertUpAxis = true;
-		// daeLoader.load(daeLocation, function(collada) {
-
-			// var modelMesh = collada.scene;
-
-			// // Prepare and play animation
-			// // modelMesh.traverse( function (child) {
-				// // if (child instanceof THREE.SkinnedMesh) {
-					// // var animation = new THREE.Animation(child, child.geometry.animation);
-					// // animation.play();
-				// // }
-			// // });
-
-			// // Set position and scale
-			// modelMesh.position.set(x, y, z);
-			// if (rot) {
-				// modelMesh.rotation.y = Math.PI;
-			// }
-			// modelMesh.scale.set(scale, scale, scale);
-
-			// // Add the mesh into scene
-			// Pantalla.holder.add(modelMesh);
-		// });
-
-	// }
 };
 
 function spawn() {
@@ -483,167 +398,179 @@ function updatePunts() {
 	fieldPunts.innerHTML = Pantalla.punts;
 }
 
+function showReplay(){
+  replayMessage.style.display="block";
+}
+
+function hideReplay(){
+  replayMessage.style.display="none";
+}
+
 function update() {
 	newTime = new Date().getTime();
 	deltaTime = newTime-oldTime;
 	oldTime = newTime;
-	// console.log('Eix X: ' + Pantalla.cotxe.position.x);
-	// console.log('Eix Y: ' + Pantalla.camera.position.y);
-	// console.log('Eix Z: ' + Pantalla.camera.position.z);
 	// Pantalla.controls.update(delta);
 	keyboard.update();
-
-	// var moveDistance = 50 * clock.getDelta(); 
-
-	if ( keyboard.down("right") && Pantalla.cotxe.position.x != 7 && !Pantalla.cotxe.is_jumping ) 
-		Pantalla.cotxe.translateX( -7 );
+	
+	if (Pantalla.status == "playing") {
+		if ( keyboard.down("right") && Pantalla.cotxe.position.x != 7 && !Pantalla.cotxe.is_jumping ) 
+			Pantalla.cotxe.translateX( -7 );
+			
+		if ( keyboard.down("left") && Pantalla.cotxe.position.x != -7 && !Pantalla.cotxe.is_jumping ) 
+			Pantalla.cotxe.translateX( 7 );
 		
-	if ( keyboard.down("left") && Pantalla.cotxe.position.x != -7 && !Pantalla.cotxe.is_jumping ) 
-		Pantalla.cotxe.translateX( 7 );
-	
-	if ( keyboard.down("up") && !Pantalla.cotxe.is_jumping )
-		jump();
-	
-	if ( keyboard.down("D") && Pantalla.cotxe.position.x != 7 && !Pantalla.cotxe.is_jumping ) 
-		Pantalla.cotxe.translateX( -7 );
+		if ( keyboard.down("up") && !Pantalla.cotxe.is_jumping )
+			jump();
 		
-	if ( keyboard.down("A") && Pantalla.cotxe.position.x != -7 && !Pantalla.cotxe.is_jumping ) 
-		Pantalla.cotxe.translateX( 7 );
-	
-	if ( keyboard.down("W") && !Pantalla.cotxe.is_jumping)
-		jump();
-
-	// if ( keyboard.pressed("D") )
-		// Pantalla.cotxe.translateX( -moveDistance );
+		if ( keyboard.down("D") && Pantalla.cotxe.position.x != 7 && !Pantalla.cotxe.is_jumping ) 
+			Pantalla.cotxe.translateX( -7 );
+			
+		if ( keyboard.down("A") && Pantalla.cotxe.position.x != -7 && !Pantalla.cotxe.is_jumping ) 
+			Pantalla.cotxe.translateX( 7 );
 		
-	// if ( keyboard.pressed("A") )
-		// Pantalla.cotxe.translateX( moveDistance );
+		if ( keyboard.down("W") && !Pantalla.cotxe.is_jumping)
+			jump();
+		
+		Pantalla.stats.update();
+		spawn();
+		updateDistance();
+		updatePunts();
 	
-	Pantalla.stats.update();
-	spawn();
-	updateDistance();
-	updatePunts();
-	
-	//Translate bodies:
-	for (var i = 0; i < Pantalla.coneList.length; i++) {
-		Pantalla.coneList[i].position.z += Pantalla.WALK_SPEED;
-		if( Math.trunc(Pantalla.coneList[i].position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
-			if(Pantalla.coneList[i].position.x==Pantalla.cotxe.position.x){
-				if(Pantalla.coneList[i].position.y+2>=Pantalla.cotxe.position.y){
-					Pantalla.coneList[i].visible=false;
+		//Translate bodies and calculate collisions:	:
+		for (var i = 0; i < Pantalla.coneList.length; i++) {
+			Pantalla.coneList[i].position.z += Pantalla.WALK_SPEED;
+			if( Math.trunc(Pantalla.coneList[i].position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
+				if(Pantalla.coneList[i].position.x==Pantalla.cotxe.position.x){
+					if(Pantalla.coneList[i].position.y+2>=Pantalla.cotxe.position.y){
+						Pantalla.coneList[i].visible=false;
+						Pantalla.status = "gameover";
+						showReplay();
+					}
+				}
+			}
+			
+		}
+		if (Pantalla.Range != null && Pantalla.cotxe!=null) {
+			Pantalla.Range.position.z+=Pantalla.WALK_SPEED;
+			if( Math.trunc(Pantalla.Range.position.z)== Math.trunc(Pantalla.cotxe.position.z)-13){
+				if(Pantalla.Range.position.x==4){
+					if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.position.x==7){
+						Pantalla.Range.visible=false;
+						Pantalla.status = "gameover";
+						showReplay();
+					}
+				}
+				else if(Pantalla.Range.position.x==-4){
+					if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.position.x==-7){
+						Pantalla.Range.visible=false;
+						Pantalla.status = "gameover";
+						showReplay();
+					}
+				}
+			}
+		}
+		if (Pantalla.carLow != null && Pantalla.cotxe!=null) {
+			Pantalla.carLow.position.z+=Pantalla.WALK_SPEED;
+			if( Math.trunc(Pantalla.carLow.position.z)== Math.trunc(Pantalla.cotxe.position.z)-13){
+				if(Pantalla.carLow.position.x==Pantalla.cotxe.position.x){
+					Pantalla.carLow.visible=false;
+					Pantalla.status = "gameover";
+					showReplay();
+				}
+			}
+		}
+		if (Pantalla.stop != null && Pantalla.cotxe!=null) {
+			Pantalla.stop.position.z+=Pantalla.WALK_SPEED;
+			if( Math.trunc(Pantalla.stop.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
+				if(Pantalla.stop.position.x==Pantalla.cotxe.position.x){
+					Pantalla.stop.visible=false;
+					Pantalla.status = "gameover";
+					showReplay();
+				}
+			}
+		}
+		if (Pantalla.robot != null && Pantalla.cotxe!=null) {
+			Pantalla.robot.position.z+=Pantalla.WALK_SPEED;
+			if( Math.trunc(Pantalla.robot.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
+				if(Pantalla.robot.position.x==Pantalla.cotxe.position.x){
+					if(Pantalla.robot.position.y+2>=Pantalla.cotxe.position.y){
+						Pantalla.robot.visible=false;
+						Pantalla.punts += 10;
+					}
+				}
+			}
+		}
+		if (Pantalla.Human != null && Pantalla.cotxe!=null) {
+			Pantalla.Human.position.z+=Pantalla.WALK_SPEED;
+			if( Math.trunc(Pantalla.Human.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
+				if(Pantalla.Human.position.x==Pantalla.cotxe.position.x){
+					if(Pantalla.Human.position.y>=Pantalla.cotxe.position.y){
+						Pantalla.Human.visible=false;
+						Pantalla.punts -= 10;
+					}
+				}
+			}
+		}
+		for(var i=0;i<7;i++){
+			if(Pantalla.esferaList[i]!=null){
+				Pantalla.esferaList[i].position.z+=Pantalla.WALK_SPEED;
+				if(Pantalla.esferaList[i].position.z>=+160){
+					Pantalla.esferaList[i].visible=true;
+					var num = Math.trunc(Math.random() * 3 + 1);
+					switch(num) {
+						case 1:
+							Pantalla.esferaList[i].position.x=7;
+							Pantalla.esferaList[i].position.z=-140;
+							break;
+						case 2:
+							Pantalla.esferaList[i].position.x=0;
+							Pantalla.esferaList[i].position.z=-140;
+							break;
+						case 3:
+							Pantalla.esferaList[i].position.x=-7;
+							Pantalla.esferaList[i].position.z=-140;
+							break;
+						default:
+							break;
+					}
 				}
 			}
 		}
 		
-	}
-	if (Pantalla.Range != null && Pantalla.cotxe!=null) {
-		Pantalla.Range.position.z+=Pantalla.WALK_SPEED;
-		if( Math.trunc(Pantalla.Range.position.z)== Math.trunc(Pantalla.cotxe.position.z)-13){
-			if(Pantalla.Range.position.x==4){
-				if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.position.x==7){
-					Pantalla.Range.visible=false;
-				}
-			}
-			else if(Pantalla.Range.position.x==-4){
-				if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.position.x==-7){
-					Pantalla.Range.visible=false;
-				}
-			}
-		}
-	}
-	if (Pantalla.carLow != null && Pantalla.cotxe!=null) {
-		Pantalla.carLow.position.z+=Pantalla.WALK_SPEED;
-		if( Math.trunc(Pantalla.carLow.position.z)== Math.trunc(Pantalla.cotxe.position.z)-13){
-			if(Pantalla.carLow.position.x==Pantalla.cotxe.position.x){
-				Pantalla.carLow.visible=false;
-			}
-		}
-	}
-	if (Pantalla.stop != null && Pantalla.cotxe!=null) {
-		Pantalla.stop.position.z+=Pantalla.WALK_SPEED;
-		if( Math.trunc(Pantalla.stop.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
-			if(Pantalla.stop.position.x==Pantalla.cotxe.position.x){
-				Pantalla.stop.visible=false;
-			}
-		}
-	}
-	if (Pantalla.robot != null && Pantalla.cotxe!=null) {
-		Pantalla.robot.position.z+=Pantalla.WALK_SPEED;
-		if( Math.trunc(Pantalla.robot.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
-			if(Pantalla.robot.position.x==Pantalla.cotxe.position.x){
-				if(Pantalla.robot.position.y+2>=Pantalla.cotxe.position.y){
-					Pantalla.robot.visible=false;
-				}
-			}
-		}
-	}
-	if (Pantalla.Human != null && Pantalla.cotxe!=null) {
-		Pantalla.Human.position.z+=Pantalla.WALK_SPEED;
-		if( Math.trunc(Pantalla.Human.position.z)== Math.trunc(Pantalla.cotxe.position.z)-6){
-			if(Pantalla.Human.position.x==Pantalla.cotxe.position.x){
-				if(Pantalla.Human.position.y>=Pantalla.cotxe.position.y){
-					Pantalla.Human.visible=false;
-				}
-			}
-		}
-	}
-	for(var i=0;i<7;i++){
-		if(Pantalla.esferaList[i]!=null){
-			Pantalla.esferaList[i].position.z+=Pantalla.WALK_SPEED;
-			if(Pantalla.esferaList[i].position.z>=+160){
-				Pantalla.esferaList[i].visible=true;
-				var num = Math.trunc(Math.random() * 3 + 1);
-				switch(num) {
-					case 1:
-						Pantalla.esferaList[i].position.x=7;
-						Pantalla.esferaList[i].position.z=-140;
-						break;
-					case 2:
-						Pantalla.esferaList[i].position.x=0;
-						Pantalla.esferaList[i].position.z=-140;
-						break;
-					case 3:
-						Pantalla.esferaList[i].position.x=-7;
-						Pantalla.esferaList[i].position.z=-140;
-						break;
-					default:
-						break;
-				}
-			}
-		}
-	}
-	//Calculate collisions:	
-	if(Pantalla.cotxe!=null && Pantalla.esferaList[6]!=null){
-		for (var i = 0; i < 7; i++) {
-			if(Math.trunc(Pantalla.esferaList[i].position.x)==Pantalla.cotxe.position.x){
-				if(Math.trunc(Pantalla.esferaList[i].position.z)==Pantalla.cotxe.position.z-3){
-					if(Math.trunc(Pantalla.esferaList[i].position.y)==Math.trunc(Pantalla.cotxe.position.y)+2){
-						Pantalla.esferaList[i].visible=false;
-						Pantalla.punts += 1;
+		if(Pantalla.cotxe!=null && Pantalla.esferaList[6]!=null){
+			for (var i = 0; i < 7; i++) {
+				if(Math.trunc(Pantalla.esferaList[i].position.x)==Pantalla.cotxe.position.x){
+					if(Math.trunc(Pantalla.esferaList[i].position.z)==Pantalla.cotxe.position.z-3){
+						if(Math.trunc(Pantalla.esferaList[i].position.y)==Math.trunc(Pantalla.cotxe.position.y)+2){
+							Pantalla.esferaList[i].visible=false;
+							Pantalla.punts += 1;
+						}
 					}
 				}
 			}
 		}
 	}
-	
+	else {
+		if ( keyboard.down("enter") ) {
+			Pantalla.punts = 0;
+			Pantalla.distance = 0;
+			Pantalla.cotxe.position.x == 0;
+			hideReplay();
+			Pantalla.status = "playing";
+		}
+	}
 	//THREE.AnimationHandler.update(delta);
 }
 
 // Render the scene
 function render () {
-		
 	if (renderer) {
 		renderer.autoClear = false;
 		renderer.clear();
 		renderer.render(Background.scene, Background.camera);
 		renderer.render(Pantalla.scene, Pantalla.camera);
 	}
-		
-	// Pantalla.anell.rotation.x +=0.01
-	// Pantalla.anell.rotation.y +=0.01
-	// Pantalla.cube.rotation.x += 0.01;
-	// Pantalla.cube.rotation.y += 0.01;
-	// Pantalla.esfera.rotation.y += 0.01;
 }
 
 // Initialize lesson on page load
