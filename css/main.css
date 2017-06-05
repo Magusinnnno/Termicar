@@ -80,3 +80,22 @@ header a, a:visited {
 .score__value--punts {
 	font-size: 30px;
 }
+
+.message {
+	font-weight: bold;
+	position: absolute;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	text-transform: uppercase;
+	pointer-events: none;
+}
+
+.message--replay {
+	font-size: 1.25vw;
+	bottom: 40vh;
+	/* display: none; */
+	text-indent: 0.5em;
+	letter-spacing: 0.5em;
+	color: #F0E68C;
+}
