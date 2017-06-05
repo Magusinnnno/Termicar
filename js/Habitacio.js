@@ -114,21 +114,17 @@ var Pantalla = {
 		
 		// Create objects
 		// var geometriaCaixa = new THREE.BoxGeometry( 1, 1, 1 );
-		var geometriaEsfera = new THREE.SphereGeometry(1, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
+
 		// var geometriaAnell = new THREE.RingGeometry( 1, 1.2, 32 );
 		// var materialCaixa = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
 		// var materialAnell =  new THREE.MeshLambertMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
-		var materialEsfera = new THREE.MeshNormalMaterial();
-		this.esfera = new THREE.Mesh( geometriaEsfera, materialEsfera );
+
 		// this.anell= new THREE.Mesh( geometriaAnell, materialAnell);
 		// this.cube = new THREE.Mesh( geometriaCaixa, materialCaixa );
 		
 		// this.holder.add( this.cube );
-		this.holder.add( this.esfera );
 		// this.holder.add( this.anell );
 		
-		this.esfera.position.x = 4;
-		this.esfera.position.y = 4;
 		// this.cube.position.x = -4;
 		// this.cube.position.y = 4;
 		// this.cube.position.z = 14;
@@ -141,6 +137,20 @@ var Pantalla = {
 		// Load Dae model
 		
 		// Load Robot model
+		
+		for(var i=0;i<7;i++){
+			var geometriaEsfera = new THREE.SphereGeometry(1, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
+			var materialEsfera = new THREE.MeshNormalMaterial();
+			var esfera = new THREE.Mesh( geometriaEsfera, materialEsfera );		
+			esfera.position.z = -460+i*40;
+			esfera.position.x = 600;
+			esfera.position.y = 2;
+			this.esferaList.push(esfera);
+			this.holder.add( esfera );
+		}
+		
+		
+		
 		var robotLoader = new THREE.ColladaLoader();
 		robotLoader.options.convertUpAxis = true;
 		robotLoader.load('models/robot.dae', function(collada) {
@@ -450,6 +460,27 @@ function spawn() {
 	else if(Math.trunc(clock.getElapsedTime()) % 5 != 0){
 		Pantalla.entrar=false;
 	}
+	/*if(Math.trunc(clock.getElapsedTime()) % 1 == 0 && Pantalla.entrar==false){
+		var num = Math.trunc(Math.random() * 3 + 1);
+		switch(num) {
+			case 1:
+				Pantalla.esfera.position.x=8;
+				Pantalla.esfera.position.z=-90;
+				break;
+			case 2:
+				Pantalla.esfera.position.x=0;
+				Pantalla.esfera.position.z=-90;
+				break;
+			case 3:
+				Pantalla.esfera.position.x=-8;
+				Pantalla.esfera.position.z=-90;
+				break;
+			default:
+				break;
+		}
+
+
+	}*/
 }
 
 // Saltar:
@@ -520,6 +551,30 @@ function update() {
 	}
 	if (Pantalla.stop != null) {
 		Pantalla.stop.position.z+=Pantalla.WALK_SPEED;
+	}
+	for(var i=0;i<7;i++){
+		if(Pantalla.esferaList[i]!=null){
+			Pantalla.esferaList[i].position.z+=Pantalla.WALK_SPEED;
+			if(Pantalla.esferaList[i].position.z>=+180){
+				var num = Math.trunc(Math.random() * 3 + 1);
+				switch(num) {
+					case 1:
+						Pantalla.esferaList[i].position.x=6;
+						Pantalla.esferaList[i].position.z=-120;
+						break;
+					case 2:
+						Pantalla.esferaList[i].position.x=0;
+						Pantalla.esferaList[i].position.z=-120;
+						break;
+					case 3:
+						Pantalla.esferaList[i].position.x=-6;
+						Pantalla.esferaList[i].position.z=-120;
+						break;
+					default:
+						break;
+				}
+			}
+		}
 	}
 	//Calculate collisions:
 	var intersects = Pantalla.Raycaster.intersectObjects( Pantalla.holder.children );
