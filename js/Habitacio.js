@@ -1,5 +1,5 @@
 // Global container
-var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight - 75;
 var container = document.createElement('div');
 document.body.appendChild(container);
 
@@ -12,7 +12,11 @@ container.appendChild(renderer.domElement);
 
 var keyboard = new KeyboardState();
 var clock = new THREE.Clock();
-var delta = 0;
+var deltaTime = 0;
+var newTime = new Date().getTime();
+var oldTime = new Date().getTime();
+var fieldDistance;
+var punts;
 
 // Create your background scene
 var Background = {
@@ -40,9 +44,9 @@ var Pantalla = {
 	clock: null, stats: null, esfera: null, anell: null,
 	cube: null, home: null, cotxe: null, robot: null,
 	stop: null, cone: null, Human: null, carLow: null,
-	Range: null, is_jumping:null, stopList: [], coneList: [],
-	esferaList: [], HumanList: [], carLowList: [], RangeList: [],
-	raycaster: null, obstacleList: [],
+	Range: null, distance:0, is_jumping:null, stopList: [],
+	coneList: [], esferaList: [], HumanList: [], carLowList: [],
+	RangeList: [], raycaster: null, obstacleList: [],
 	
 	init: function() {
 
@@ -163,7 +167,6 @@ var Pantalla = {
 			Pantalla.holder.add(Pantalla.robot);
 		});
 		
-		
 		// Load Stop model
 		var StopLoader = new THREE.ColladaLoader();
 		StopLoader.options.convertUpAxis = true;
@@ -213,7 +216,6 @@ var Pantalla = {
 		HumanLoader.load('models/human_man_1.2.dae', function(collada) {
 			Pantalla.Human = collada.scene;
 
-		
 			// Set position and scale
 			Pantalla.Human.position.set(600, 4, -10.5);
 			Pantalla.Human.scale.set(1.5,1.5,1.5);
@@ -222,33 +224,26 @@ var Pantalla = {
 			Pantalla.holder.add(Pantalla.Human);
 		});
 		
-		
 	   // Load Cotxe low poly model
 		var carLowLoader = new THREE.ColladaLoader();
 		carLowLoader.options.convertUpAxis = true;
 		carLowLoader.load('models/Car.dae', function(collada) {
 			Pantalla.carLow = collada.scene;
 
-		
 			// Set position and scale
-			
-
 			Pantalla.carLow.position.set(-8, 2.8, 600.0);
 			Pantalla.carLow.scale.set(2.3,3.5,1.8);
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.carLow);
-			
 		});
 
-		
 	   // Load RangeRover model
 		var RangeLoader = new THREE.ColladaLoader();
 		RangeLoader.options.convertUpAxis = true;
 		RangeLoader.load('models/RangeRover.dae', function(collada) {
 			Pantalla.Range = collada.scene;
 
-		
 			// Set position and scale
 			Pantalla.Range.rotation.y = Math.PI / 2;
 			Pantalla.Range.position.set(4, 0.5, 600);
@@ -256,8 +251,6 @@ var Pantalla = {
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.Range);
-			
-			
 		});
 		
 		// Load Car model
@@ -273,7 +266,6 @@ var Pantalla = {
 
 			// Add the mesh into scene
 			Pantalla.holder.add(Pantalla.cotxe);
-			Pantalla.raycaster = new THREE.Raycaster(Pantalla.cotxe.position, new THREE.Vector3(0,0,-1));
 		});
 		
 		// Moving holder
@@ -390,7 +382,6 @@ function spawn() {
 							break;
 					}
 					Pantalla.carLow.position.z = -160;
-
 				}
 				break;
 			case 4:
@@ -452,45 +443,10 @@ function spawn() {
 				break;
 		}
 		Pantalla.entrar = true;
-		// if ()==1){
-			// for (var i = 0; i < Pantalla.coneList.length; i++) {
-				// Pantalla.coneList[i].position.z = -90;
-				
-			// }
-			// console.log("puamerda")
-			// entrar=false;
-		// }
-		// else{
-			// if (Pantalla.Range != null) {
-				// Pantalla.Range.position.z = -90;
-			// }
-			// entrar=false;
-		// }
 	}
 	else if(Math.trunc(clock.getElapsedTime()) % 5 != 0){
 		Pantalla.entrar=false;
 	}
-	/*if(Math.trunc(clock.getElapsedTime()) % 1 == 0 && Pantalla.entrar==false){
-		var num = Math.trunc(Math.random() * 3 + 1);
-		switch(num) {
-			case 1:
-				Pantalla.esfera.position.x=8;
-				Pantalla.esfera.position.z=-90;
-				break;
-			case 2:
-				Pantalla.esfera.position.x=0;
-				Pantalla.esfera.position.z=-90;
-				break;
-			case 3:
-				Pantalla.esfera.position.x=-8;
-				Pantalla.esfera.position.z=-90;
-				break;
-			default:
-				break;
-		}
-
-
-	}*/
 }
 
 // Saltar:
@@ -512,8 +468,15 @@ function animate() {
   update();
 }
 
+function updateDistance(){
+  Pantalla.distance += Pantalla.WALK_SPEED*deltaTime;
+  fieldDistance.innerHTML = Math.floor(Pantalla.distance);
+}
+
 function update() {
-	var delta = Pantalla.clock.getDelta();
+	newTime = new Date().getTime();
+	deltaTime = newTime-oldTime;
+	oldTime = newTime;
 	// console.log('Eix X: ' + Pantalla.cotxe.position.x);
 	// console.log('Eix Y: ' + Pantalla.camera.position.y);
 	// console.log('Eix Z: ' + Pantalla.camera.position.z);
@@ -548,6 +511,7 @@ function update() {
 	
 	Pantalla.stats.update();
 	spawn();
+	updateDistance();
 	
 	//Translate bodies:
 	for (var i = 0; i < Pantalla.coneList.length; i++) {
@@ -631,6 +595,11 @@ function render () {
 // Initialize lesson on page load
 function initialize() {
 	Pantalla.init();
+	
+	//Interfície
+	fieldDistance = document.getElementById("distValue");
+	punts = document.getElementById("punts");
+	
 	Background.init();
 	animate();
 }
