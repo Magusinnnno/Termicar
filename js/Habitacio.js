@@ -14,10 +14,12 @@ var clock = new THREE.Clock();
 var deltaTime = 0;
 var newTime = new Date().getTime();
 var oldTime = new Date().getTime();
+var increased = false;
 var fieldDistance;
 var fieldPunts;
 var fieldHighscore;
 var fieldMaxDist;
+var fieldScoreDist;
 
 // Create your background scene
 var Background = {
@@ -48,7 +50,7 @@ var Pantalla = {
 	Range: null, distance:0, punts: 0, is_jumping:null,
 	stopList: [], coneList: [], esferaList: [], HumanList: [],
 	carLowList: [], RangeList: [], obstacleList: [], status : "gameover",
-	highScore: 0, highDist: 0,
+	highScore: 0, highDist: 0, scoreDist: 0,
 	
 	init: function() {
 
@@ -409,12 +411,21 @@ function updateMaxDist() {
 	fieldMaxDist.innerHTML = Math.floor(Pantalla.highDist);
 }
 
+function updateScoreDist() {
+	var res = Pantalla.punts / Pantalla.distance;
+	fieldScoreDist.innerHTML = res.toFixed(2);
+}
+
 function showReplay(){
   replayMessage.style.display="block";
 }
 
 function hideReplay(){
   replayMessage.style.display="none";
+}
+
+function updateSpeed() {
+	Pantalla.WALK_SPEED *= 2;
 }
 
 function end() {
@@ -460,6 +471,7 @@ function update() {
 		spawn();
 		updateDistance();
 		updatePunts();
+		updateScoreDist();
 	
 		//Translate bodies and calculate collisions:	:
 		for (var i = 0; i < Pantalla.coneList.length; i++) {
@@ -569,12 +581,24 @@ function update() {
 				}
 			}
 		}
+		
+		// Increase Speed:
+		// if (Math.trunc(Pantalla.distance % 500) == 0 && Pantalla.distance != 0) {
+			// if (!increased) {
+				// updateSpeed();
+				// increased = true;
+			// }
+		// }
+		// else {
+			// increased = false;
+		// }
 	}
 	else {
 		if ( keyboard.down("enter") ) {
 			Pantalla.punts = 0;
 			Pantalla.distance = 0;
 			Pantalla.cotxe.position.x == 0;
+			Pantalla.WALK_SPEED = 1.4;
 			hideReplay();
 			Pantalla.status = "playing";
 		}
@@ -601,6 +625,7 @@ function initialize() {
 	fieldPunts = document.getElementById("puntsValue");
 	fieldHighscore = document.getElementById("highscoreValue");
 	fieldMaxDist = document.getElementById("maxdistValue");
+	fieldScoreDist = document.getElementById("scoredistValue");
 	
 	Background.init();
 	animate();
