@@ -201,7 +201,7 @@ var Pantalla = {
 					newPiece.add(new THREE.Mesh(Pantalla.cone.children[j].geometry, Pantalla.cone.children[j].material));
 				}
 			
-				newPiece.position.set(-8 + i * 8, 2, 600);
+				newPiece.position.set(-7 + i * 7, 2, 600);
 				newPiece.rotation.x = Math.PI / 2;
 				newPiece.scale.set(1.5,1.5,1.5);
 				Pantalla.coneList.push(newPiece);
@@ -540,12 +540,12 @@ function update() {
 		Pantalla.Range.position.z+=Pantalla.WALK_SPEED;
 		if( Math.trunc(Pantalla.Range.position.z)== Math.trunc(Pantalla.cotxe.position.z)-13){
 			if(Pantalla.Range.position.x==4){
-				if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.positionx.x==7){
+				if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.position.x==7){
 					Pantalla.Range.visible=false;
 				}
 			}
 			else if(Pantalla.Range.position.x==-4){
-				if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.positionx.x==-7){
+				if(Pantalla.cotxe.position.x==0 || Pantalla.cotxe.position.x==-7){
 					Pantalla.Range.visible=false;
 				}
 			}
