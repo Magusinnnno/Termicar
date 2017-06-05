@@ -274,7 +274,42 @@ var Pantalla = {
 		this.scene.add( this.holder );
 		this.is_jumping = false;
 	},
-
+	
+	collision: function() {
+		this.dummyMesh.position.x = this.cotxe.position.x;
+		this.dummyMesh.position.y = this.cotxe.position.y;
+		this.dummyMesh.position.z = this.cotxe.position.z;
+		
+		this.dummyMesh.rotation.x = this.cotxe.rotation.x;
+		this.dummyMesh.rotation.y = this.cotxe.rotation.y;
+        this.dummyMesh.rotation.z = this.cotxe.rotation.z;
+		
+		this.dummyMesh.translateZ(this.WALK_SPEED)
+		
+		var distance = 64
+		
+		var obstacles = Pantalla.getObstacles();
+		
+		Pantalla.Raycaster.set(this.dummyMesh.position, new THREE.Vector3(this.dummyMesh.position.x, this.dummyMesh.position.y, this.dummyMesh.position.z));
+		
+		var colisio = Pantalla.Raycaster.IntersectObjects(obstacles);
+		
+		if (colisio.length > 0 && colisio[0].distance <= distance) {
+            return false;
+        } else {
+            return true;
+        }
+	},
+	
+	getObstacles: function() {
+		this.obstacleList = []
+		this.obstacleList.concat(this.coneList);
+		this.obstacleList.concat(this.carLowList);
+		this.obstacleList.concat(this.RangeList);
+		this.obstacleList.concat(this.stopList);
+		return this.obstacleList
+	},
+	
 	// loadJsonModel: function() {
 
 		// // Prepare JSONLoader
@@ -442,45 +477,10 @@ function spawn() {
 				break;
 		}
 		Pantalla.entrar = true;
-		// if ()==1){
-			// for (var i = 0; i < Pantalla.coneList.length; i++) {
-				// Pantalla.coneList[i].position.z = -90;
-				
-			// }
-			// console.log("puamerda")
-			// entrar=false;
-		// }
-		// else{
-			// if (Pantalla.Range != null) {
-				// Pantalla.Range.position.z = -90;
-			// }
-			// entrar=false;
-		// }
 	}
 	else if(Math.trunc(clock.getElapsedTime()) % 5 != 0){
 		Pantalla.entrar=false;
 	}
-	/*if(Math.trunc(clock.getElapsedTime()) % 1 == 0 && Pantalla.entrar==false){
-		var num = Math.trunc(Math.random() * 3 + 1);
-		switch(num) {
-			case 1:
-				Pantalla.esfera.position.x=8;
-				Pantalla.esfera.position.z=-90;
-				break;
-			case 2:
-				Pantalla.esfera.position.x=0;
-				Pantalla.esfera.position.z=-90;
-				break;
-			case 3:
-				Pantalla.esfera.position.x=-8;
-				Pantalla.esfera.position.z=-90;
-				break;
-			default:
-				break;
-		}
-
-
-	}*/
 }
 
 // Saltar:
@@ -503,7 +503,7 @@ function animate() {
 }
 
 function update() {
-	var delta = Pantalla.clock.getDelta();
+	// var delta = Pantalla.clock.getDelta();
 	// console.log('Eix X: ' + Pantalla.cotxe.position.x);
 	// console.log('Eix Y: ' + Pantalla.camera.position.y);
 	// console.log('Eix Z: ' + Pantalla.camera.position.z);
