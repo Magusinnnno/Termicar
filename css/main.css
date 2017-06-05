@@ -2,15 +2,19 @@
   margin: 0;
   padding: 0;
 }
+
 html {
   overflow: hidden;
 }
+
 a {
   outline: none;
 }
+
 a:focus {
   background-color: #a89d8a;
 }
+
 header {
   background-color: rgba(33, 33, 33, 0.9);
   color: #fff;
@@ -20,6 +24,7 @@ header {
   margin: 0;
   padding: 0;
 }
+
 header h2{
   font-size: 16px;
   margin: 0 auto;
@@ -27,7 +32,51 @@ header h2{
   width: 80%;
   text-align: center;
 }
+
 header a, a:visited {
   text-decoration: none;
   color: #fcfcfc; 
+}
+
+.score {
+	width: 100%;
+	margin: 2em 0 0;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.score__content {
+	position: relative;
+	display: inline-block;
+	padding: 0 1em;
+	vertical-align: top;
+}
+
+.score__content:nth-child(2) {
+	border-right: 1px solid #d1b790;
+	border-left: 1px solid #d1b790;
+}
+
+.score__label {
+	font-size: 9px;
+	position: relative;
+	margin: 0 0 0.5em 0;
+	text-align: center;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	color: #d1b790;
+}
+
+.score__value {
+	font-family: 'Playfair Display';
+	font-weight: bold;
+	color: #F0E68C;
+}
+
+.score__value--dist {
+	font-size: 30px;
+}
+
+.score__value--punts {
+	font-size: 30px;
 }
